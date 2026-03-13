@@ -1,4 +1,4 @@
-/* Estilos globais adicionais (se necessário) */
+@import "tailwindcss";
 
 /* Animações */
 @keyframes fadeIn {
@@ -17,9 +17,4 @@
 /* Scroll suave */
 html {
   scroll-behavior: smooth;
-}
-
-/* Customizações do Tailwind */
-body {
-  @apply bg-gray-50;
 }

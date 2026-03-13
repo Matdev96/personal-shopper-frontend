@@ -1,76 +1,63 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import api from '../services/api';
+import { toast } from 'react-toastify';
 import useAuthStore from '../store/authStore';
 
 export default function Register() {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setUser, setToken } = useAuthStore();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register: registerUser, isLoading } = useAuthStore();
   const password = watch('password');
 
   const onSubmit = async (data) => {
     try {
-      setLoading(true);
-      setError(null);
-
-      const response = await api.post('/auth/register', {
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      });
-
-      setToken(response.data.token);
-      setUser(response.data.user);
-      navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Erro ao registrar');
-    } finally {
-      setLoading(false);
+      await registerUser(data.email, data.password, data.full_name);
+      toast.success('Registro realizado com sucesso! Faça login para continuar.');
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.detail || 'Erro ao registrar');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-8">Registrar</h1>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+          Registre-se
+        </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Nome Completo */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
-              Nome
+            <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
+              Nome Completo
             </label>
             <input
+              id="full_name"
               type="text"
-              {...register('name', {
-                required: 'Nome é obrigatório',
+              {...register('full_name', {
+                required: 'Nome completo é obrigatório',
                 minLength: {
                   value: 3,
                   message: 'Nome deve ter no mínimo 3 caracteres',
                 },
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="Seu nome"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Seu Nome Completo"
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            {errors.full_name && (
+              <p className="mt-1 text-sm text-red-600">{errors.full_name.message}</p>
             )}
           </div>
 
+          {/* Email */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input
+              id="email"
               type="email"
               {...register('email', {
                 required: 'Email é obrigatório',
@@ -79,19 +66,21 @@ export default function Register() {
                   message: 'Email inválido',
                 },
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="seu@email.com"
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
             )}
           </div>
 
+          {/* Senha */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Senha
             </label>
             <input
+              id="password"
               type="password"
               {...register('password', {
                 required: 'Senha é obrigatória',
@@ -100,46 +89,50 @@ export default function Register() {
                   message: 'Senha deve ter no mínimo 6 caracteres',
                 },
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••"
             />
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
             )}
           </div>
 
+          {/* Confirmar Senha */}
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">
+            <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-700">
               Confirmar Senha
             </label>
             <input
+              id="confirm_password"
               type="password"
-              {...register('confirmPassword', {
+              {...register('confirm_password', {
                 required: 'Confirmação de senha é obrigatória',
                 validate: (value) =>
                   value === password || 'As senhas não correspondem',
               })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••"
             />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>
+            {errors.confirm_password && (
+              <p className="mt-1 text-sm text-red-600">{errors.confirm_password.message}</p>
             )}
           </div>
 
+          {/* Botão de Registro */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            disabled={isLoading}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
           >
-            {loading ? 'Registrando...' : 'Registrar'}
+            {isLoading ? 'Carregando...' : 'Registrar'}
           </button>
         </form>
 
-        <p className="text-center text-gray-600 mt-6">
+        {/* Link para Login */}
+        <p className="mt-4 text-center text-sm text-gray-600">
           Já tem conta?{' '}
-          <Link to="/login" className="text-blue-600 font-semibold hover:underline">
-            Faça login
+          <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+            Faça login aqui
           </Link>
         </p>
       </div>
