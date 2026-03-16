@@ -40,7 +40,7 @@ export default function Header() {
               Produtos
             </Link>
 
-            {isAuthenticated() && (
+            {isAuthenticated && (
               <Link to="/orders" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
                 Pedidos
               </Link>
@@ -75,7 +75,7 @@ export default function Header() {
             </Link>
 
             {/* Autenticação */}
-            {isAuthenticated() ? (
+            {isAuthenticated ? (
               <div className="relative">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}

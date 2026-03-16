@@ -6,12 +6,18 @@ const useAuthStore = create((set) => ({
   token: null,
   isLoading: false,
   error: null,
+  isAuthenticated: false,  // ✅ Propriedade booleana
 
   // Inicializar estado a partir do localStorage
   initializeAuth: () => {
     const token = authService.getToken();
     const user = authService.getUser();
-    set({ token, user });
+    
+    set({ 
+      token, 
+      user,
+      isAuthenticated: !!token
+    });
   },
 
   // Registrar novo usuário
@@ -36,6 +42,7 @@ const useAuthStore = create((set) => ({
         user: response.user,
         token: response.access_token,
         isLoading: false,
+        isAuthenticated: true,
       });
       return response;
     } catch (error) {
@@ -73,13 +80,18 @@ const useAuthStore = create((set) => ({
   // Fazer logout
   logout: () => {
     authService.logout();
-    set({ user: null, token: null, error: null });
+    set({ 
+      user: null, 
+      token: null, 
+      error: null,
+      isAuthenticated: false
+    });
   },
 
-  // Verificar se está autenticado
-  isAuthenticated: () => {
-    return authService.isAuthenticated();
-  },
+  // ❌ REMOVA ESTA FUNÇÃO (estava causando conflito)
+  // isAuthenticated: () => {
+  //   return authService.isAuthenticated();
+  // },
 
   // Limpar erro
   clearError: () => {
