@@ -1,102 +1,89 @@
 import { create } from 'zustand';
-import authService from '../services/authService';
+import authService, { User, UpdateUserData, LoginResponse } from '../services/authService';
 
-const useAuthStore = create((set) => ({
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  error: string | null;
+  isAuthenticated: boolean;
+
+  initializeAuth: () => void;
+  register: (email: string, password: string, full_name: string) => Promise<User>;
+  login: (email: string, password: string) => Promise<LoginResponse>;
+  getCurrentUser: () => Promise<User>;
+  updateUser: (userData: UpdateUserData) => Promise<User>;
+  logout: () => void;
+  clearError: () => void;
+}
+
+const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
   isLoading: false,
   error: null,
-  isAuthenticated: false,  // ✅ Propriedade booleana
+  isAuthenticated: false,
 
-  // Inicializar estado a partir do localStorage
   initializeAuth: () => {
     const token = authService.getToken();
     const user = authService.getUser();
-    
-    set({ 
-      token, 
-      user,
-      isAuthenticated: !!token
-    });
+    set({ token, user, isAuthenticated: !!token });
   },
 
-  // Registrar novo usuário
   register: async (email, password, full_name) => {
     set({ isLoading: true, error: null });
     try {
       const response = await authService.register(email, password, full_name);
       set({ isLoading: false });
       return response;
-    } catch (error) {
+    } catch (error: any) {
       set({ isLoading: false, error: error.detail || error.message });
       throw error;
     }
   },
 
-  // Fazer login
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
       const response = await authService.login(email, password);
-      set({
-        user: response.user,
-        token: response.access_token,
-        isLoading: false,
-        isAuthenticated: true,
-      });
+      set({ user: response.user, token: response.access_token, isLoading: false, isAuthenticated: true });
       return response;
-    } catch (error) {
+    } catch (error: any) {
       set({ isLoading: false, error: error.detail || error.message });
       throw error;
     }
   },
 
-  // Obter dados do usuário autenticado
   getCurrentUser: async () => {
     set({ isLoading: true, error: null });
     try {
       const response = await authService.getCurrentUser();
       set({ user: response, isLoading: false });
       return response;
-    } catch (error) {
+    } catch (error: any) {
       set({ isLoading: false, error: error.detail || error.message });
       throw error;
     }
   },
 
-  // Atualizar dados do usuário
   updateUser: async (userData) => {
     set({ isLoading: true, error: null });
     try {
       const response = await authService.updateUser(userData);
       set({ user: response, isLoading: false });
       return response;
-    } catch (error) {
+    } catch (error: any) {
       set({ isLoading: false, error: error.detail || error.message });
       throw error;
     }
   },
 
-  // Fazer logout
   logout: () => {
     authService.logout();
-    set({ 
-      user: null, 
-      token: null, 
-      error: null,
-      isAuthenticated: false
-    });
+    set({ user: null, token: null, error: null, isAuthenticated: false });
   },
 
-  // ❌ REMOVA ESTA FUNÇÃO (estava causando conflito)
-  // isAuthenticated: () => {
-  //   return authService.isAuthenticated();
-  // },
-
-  // Limpar erro
-  clearError: () => {
-    set({ error: null });
-  },
+  clearError: () => set({ error: null }),
 }));
 
 export default useAuthStore;

@@ -45,7 +45,9 @@ export default function AdminDashboard() {
 
     let productsData = [];
     if (productsRes.ok) {
-      productsData = await productsRes.json();
+      const json = await productsRes.json();
+      // API retorna { items, total, page, pages }
+      productsData = json.items ?? json;
     }
 
     // ✅ Buscar pedidos COM skip e limit corretos

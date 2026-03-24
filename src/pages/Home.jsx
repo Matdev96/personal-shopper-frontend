@@ -5,30 +5,47 @@ import useProductStore from '../store/productStore';
 import useCategoryStore from '../store/categoryStore';
 import useAuthStore from '../store/authStore';
 
+const PAGE_SIZE = 12;
+
 export default function Home() {
-  const { products, fetchProducts, isLoading } = useProductStore();
+  const { products, fetchProducts, isLoading, currentPage, totalPages } = useProductStore();
   const { categories, fetchCategories } = useCategoryStore();
   const { user } = useAuthStore();
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+
+  const loadProducts = (newPage = 1, category = selectedCategory, search = searchTerm) => {
+    fetchProducts({
+      skip: (newPage - 1) * PAGE_SIZE,
+      limit: PAGE_SIZE,
+      ...(category ? { category_id: category } : {}),
+      ...(search ? { search } : {}),
+    }).catch(() => toast.error('Erro ao carregar produtos'));
+  };
 
   useEffect(() => {
-    // Carregar categorias
     fetchCategories();
-    // Carregar produtos
-    fetchProducts({ limit: 12 });
+    loadProducts(1);
   }, []);
 
-  const handleCategoryFilter = async (categoryId) => {
+  const handleCategoryFilter = (categoryId) => {
     setSelectedCategory(categoryId);
-    try {
-      if (categoryId) {
-        await useProductStore.getState().filterByCategory(categoryId, { limit: 12 });
-      } else {
-        await fetchProducts({ limit: 12 });
-      }
-    } catch (error) {
-      toast.error('Erro ao filtrar produtos');
-    }
+    setSearchTerm('');
+    setPage(1);
+    loadProducts(1, categoryId, '');
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    loadProducts(1, selectedCategory, searchTerm);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    loadProducts(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -63,6 +80,35 @@ export default function Home() {
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto py-12 px-4">
+
+        {/* Barra de Busca */}
+        <section className="mb-8">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Buscar produtos..."
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
+            />
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+            >
+              Buscar
+            </button>
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => { setSearchTerm(''); setPage(1); loadProducts(1, selectedCategory, ''); }}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-semibold transition-colors"
+              >
+                Limpar
+              </button>
+            )}
+          </form>
+        </section>
+
         {/* Categorias */}
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Categorias</h2>
@@ -170,6 +216,41 @@ export default function Home() {
                   </div>
                 </Link>
               ))}
+            </div>
+          )}
+
+          {/* Paginação */}
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center gap-2 mt-10">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="px-4 py-2 rounded-lg border font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-gray-100 text-gray-700"
+              >
+                &larr; Anterior
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => handlePageChange(p)}
+                  className={`px-4 py-2 rounded-lg border font-semibold transition-colors ${
+                    p === currentPage
+                      ? 'bg-blue-600 text-white border-blue-600'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                className="px-4 py-2 rounded-lg border font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-gray-100 text-gray-700"
+              >
+                Próxima &rarr;
+              </button>
             </div>
           )}
         </section>

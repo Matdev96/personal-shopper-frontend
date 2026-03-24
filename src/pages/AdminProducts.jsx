@@ -43,8 +43,9 @@ export default function AdminProducts() {
         throw new Error('Erro ao buscar produtos');
       }
 
-      const data = await response.json();
-      setProducts(data);
+      const json = await response.json();
+      // API retorna { items, total, page, pages }
+      setProducts(json.items ?? json);
     } catch (error) {
       toast.error('Erro ao carregar produtos');
     } finally {

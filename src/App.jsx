@@ -13,6 +13,7 @@ import OrderDetail from './pages/OrderDetail';
 import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 
 // Importações dos novos componentes de Admin
 import AdminDashboard from './pages/AdminDashboard';
@@ -88,6 +89,15 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <OrderDetail />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
                   </ProtectedRoute>
                 }
               />
