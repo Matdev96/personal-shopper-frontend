@@ -29,48 +29,33 @@ export default function AdminDashboard() {
     const token = localStorage.getItem('token');
 
     // ✅ Buscar usuários COM skip e limit corretos
-    console.log('Buscando usuários...');
     const usersRes = await fetch('http://127.0.0.1:8000/api/v1/admin/users?skip=0&limit=100', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('Status de usuários:', usersRes.status);
-    
+
     let usersData = [];
     if (usersRes.ok) {
       usersData = await usersRes.json();
-      console.log('Dados de usuários:', usersData);
-    } else {
-      console.error('Erro ao buscar usuários:', usersRes.status);
     }
 
     // ✅ Buscar produtos COM skip e limit corretos
-    console.log('Buscando produtos...');
     const productsRes = await fetch('http://127.0.0.1:8000/api/v1/products?skip=0&limit=100', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('Status de produtos:', productsRes.status);
-    
+
     let productsData = [];
     if (productsRes.ok) {
       productsData = await productsRes.json();
-      console.log('Dados de produtos:', productsData);
-    } else {
-      console.error('Erro ao buscar produtos:', productsRes.status);
     }
 
     // ✅ Buscar pedidos COM skip e limit corretos
-    console.log('Buscando pedidos...');
     const ordersRes = await fetch('http://127.0.0.1:8000/api/v1/orders?skip=0&limit=100', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('Status de pedidos:', ordersRes.status);
-    
+
     let ordersData = [];
     if (ordersRes.ok) {
       ordersData = await ordersRes.json();
-      console.log('Dados de pedidos:', ordersData);
-    } else {
-      console.error('Erro ao buscar pedidos:', ordersRes.status);
     }
 
     // ✅ Calcular receita total
@@ -87,15 +72,7 @@ export default function AdminDashboard() {
       totalRevenue: totalRevenue,
     });
 
-    console.log('Stats atualizados:', {
-      totalUsers: Array.isArray(usersData) ? usersData.length : 0,
-      totalProducts: Array.isArray(productsData) ? productsData.length : 0,
-      totalOrders: Array.isArray(ordersData) ? ordersData.length : 0,
-      totalRevenue: totalRevenue,
-    });
-
   } catch (error) {
-    console.error('Erro ao buscar estatísticas:', error);
     setStats({
       totalUsers: 0,
       totalProducts: 0,

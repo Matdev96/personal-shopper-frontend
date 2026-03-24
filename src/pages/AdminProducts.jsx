@@ -47,7 +47,6 @@ export default function AdminProducts() {
       setProducts(data);
     } catch (error) {
       toast.error('Erro ao carregar produtos');
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +58,7 @@ export default function AdminProducts() {
       const data = await response.json();
       setCategories(data);
     } catch (error) {
-      console.error('Erro ao buscar categorias:', error);
+      // silencioso — categorias são opcionais no formulário
     }
   };
 
@@ -141,8 +140,6 @@ export default function AdminProducts() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log('Error data:', errorData);
         throw new Error('Erro ao criar produto');
       }
 
@@ -161,7 +158,6 @@ export default function AdminProducts() {
       fetchProducts();
     } catch (error) {
       toast.error('Erro ao criar produto');
-      console.error(error);
     }
   };
 
@@ -185,7 +181,6 @@ export default function AdminProducts() {
       fetchProducts();
     } catch (error) {
       toast.error('Erro ao deletar produto');
-      console.error(error);
     }
   };
 
