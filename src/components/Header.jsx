@@ -48,6 +48,11 @@ export default function Header() {
                 <Link to="/requests" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
                   Solicitações
                 </Link>
+                {user?.is_admin && (
+                  <Link to="/admin/dashboard" className="text-purple-600 hover:text-purple-800 font-semibold transition-colors">
+                    Dashboard
+                  </Link>
+                )}
               </>
             )}
           </nav>
@@ -120,6 +125,15 @@ export default function Header() {
                     >
                       Minhas Solicitações
                     </Link>
+                    {user?.is_admin && (
+                      <Link
+                        to="/admin/dashboard"
+                        className="block px-4 py-2 text-purple-600 hover:bg-gray-100 font-semibold transition-colors border-t"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        Dashboard Admin
+                      </Link>
+                    )}
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors border-t"
