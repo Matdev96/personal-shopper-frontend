@@ -305,6 +305,13 @@ export default function Products() {
                           </span>
                         </div>
 
+                        {/* Categoria */}
+                        {product.category?.name && (
+                          <span className="inline-block text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full mb-3">
+                            {product.category.name}
+                          </span>
+                        )}
+
                         {/* Especificações */}
                         <div className="text-sm text-gray-600 mb-3">
                           {product.color && <p>Cor: {product.color}</p>}
