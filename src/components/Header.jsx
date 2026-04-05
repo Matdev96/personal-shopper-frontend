@@ -41,9 +41,14 @@ export default function Header() {
             </Link>
 
             {isAuthenticated && (
-              <Link to="/orders" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
-                Pedidos
-              </Link>
+              <>
+                <Link to="/orders" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
+                  Pedidos
+                </Link>
+                <Link to="/requests" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
+                  Solicitações
+                </Link>
+              </>
             )}
           </nav>
 
@@ -107,6 +112,13 @@ export default function Header() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Meus Pedidos
+                    </Link>
+                    <Link
+                      to="/requests"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Minhas Solicitações
                     </Link>
                     <button
                       onClick={handleLogout}

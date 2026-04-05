@@ -19,6 +19,7 @@ export default function AdminLayout({ children }) {
     { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/admin/users', label: 'Usuários', icon: '👥' },
     { path: '/admin/products', label: 'Produtos', icon: '📦' },
+    { path: '/admin/requests', label: 'Solicitações', icon: '🛍️' },
   ];
 
   return (

@@ -19,6 +19,13 @@ import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminProducts from './pages/AdminProducts';
+import AdminRequests from './pages/AdminRequests';
+import AdminRequestDetail from './pages/AdminRequestDetail';
+
+// Solicitações
+import Requests from './pages/Requests';
+import RequestNew from './pages/RequestNew';
+import RequestDetail from './pages/RequestDetail';
 
 import useAuthStore from './store/authStore';
 import './App.css';
@@ -102,6 +109,11 @@ function App() {
                 }
               />
 
+              {/* Solicitações de produto */}
+              <Route path="/requests" element={<ProtectedRoute><Requests /></ProtectedRoute>} />
+              <Route path="/requests/new" element={<ProtectedRoute><RequestNew /></ProtectedRoute>} />
+              <Route path="/requests/:requestId" element={<ProtectedRoute><RequestDetail /></ProtectedRoute>} />
+
               {/* Rotas Protegidas para Administradores */}
               <Route
                 path="/admin/dashboard"
@@ -127,6 +139,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/admin/requests" element={<ProtectedRoute adminOnly><AdminRequests /></ProtectedRoute>} />
+              <Route path="/admin/requests/:requestId" element={<ProtectedRoute adminOnly><AdminRequestDetail /></ProtectedRoute>} />
             </Routes>
           </main>
           <Footer />
