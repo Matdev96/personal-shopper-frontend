@@ -16,8 +16,11 @@ export default function AdminProducts() {
     description: '',
     price: '',
     category_id: '',
-    imageUrl: '', // ✅ NOVO: URL da imagem
-    imageFile: null, // ✅ NOVO: Arquivo da imagem
+    stock: '',
+    size: '',
+    color: '',
+    imageUrl: '',
+    imageFile: null,
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [imageSource, setImageSource] = useState('url'); // ✅ NOVO: Controla se é URL ou arquivo
@@ -126,8 +129,10 @@ export default function AdminProducts() {
       form.append('description', formData.description);
       form.append('price', formData.price);
       form.append('category_id', formData.category_id);
+      form.append('stock', formData.stock || '0');
+      if (formData.size) form.append('size', formData.size);
+      if (formData.color) form.append('color', formData.color);
 
-      // ✅ NOVO: Enviar URL ou arquivo
       if (imageSource === 'url' && formData.imageUrl) {
         form.append('image_url', formData.imageUrl);
       } else if (imageSource === 'file' && formData.imageFile) {
@@ -150,6 +155,9 @@ export default function AdminProducts() {
         description: '',
         price: '',
         category_id: '',
+        stock: '',
+        size: '',
+        color: '',
         imageUrl: '',
         imageFile: null,
       });
@@ -261,6 +269,49 @@ export default function AdminProducts() {
                     placeholder="Ex: 99.90"
                   />
                 </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Estoque *
+                  </label>
+                  <input
+                    type="number"
+                    name="stock"
+                    value={formData.stock}
+                    onChange={handleInputChange}
+                    min="0"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Ex: 10"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Tamanho <span className="text-gray-400 font-normal">(opcional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="size"
+                    value={formData.size}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Ex: P, M, G, 42"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Cor <span className="text-gray-400 font-normal">(opcional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    placeholder="Ex: Azul, Vermelho"
+                  />
+                </div>
               </div>
 
               <div>
@@ -369,11 +420,16 @@ export default function AdminProducts() {
               <div className="p-4">
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{product.name}</h3>
                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">{product.description}</p>
-                <div className="flex justify-between items-center mb-4">
+                <div className="flex justify-between items-center mb-2">
                   <span className="text-2xl font-bold text-blue-600">R$ {product.price.toFixed(2)}</span>
                   <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
                     {product.category?.name || 'Sem categoria'}
                   </span>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-4 text-xs text-gray-500">
+                  <span>Estoque: <strong>{product.stock ?? 0}</strong></span>
+                  {product.size && <span>Tamanho: <strong>{product.size}</strong></span>}
+                  {product.color && <span>Cor: <strong>{product.color}</strong></span>}
                 </div>
                 <button
                   onClick={() => handleDeleteProduct(product.id)}
