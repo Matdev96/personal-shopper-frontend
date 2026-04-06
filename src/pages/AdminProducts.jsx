@@ -38,7 +38,7 @@ export default function AdminProducts() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/v1/products?limit=100', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/v1/products?limit=100', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -58,7 +58,7 @@ export default function AdminProducts() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/categories?limit=100');
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/v1/categories?limit=100');
       const data = await response.json();
       setCategories(data);
     } catch (error) {
@@ -139,7 +139,7 @@ export default function AdminProducts() {
         form.append('image', formData.imageFile);
       }
 
-      const response = await fetch('http://127.0.0.1:8000/api/v1/admin/products/', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/v1/admin/products/', {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: form,
@@ -177,7 +177,7 @@ export default function AdminProducts() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/admin/products/${productId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/products/${productId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -24,7 +24,7 @@ export default function AdminUsers() {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/api/v1/admin/users?limit=100', {
+      const response = await fetch('${import.meta.env.VITE_API_URL}/api/v1/admin/users?limit=100', {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -49,7 +49,7 @@ export default function AdminUsers() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/admin/users/${userId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users/${userId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -69,7 +69,7 @@ export default function AdminUsers() {
   const handleViewOrders = async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/admin/users/${userId}/orders`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users/${userId}/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

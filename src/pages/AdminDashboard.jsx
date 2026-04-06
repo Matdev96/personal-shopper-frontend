@@ -37,13 +37,13 @@ export default function AdminDashboard() {
 
       const [usersRes, productsRes, ordersRes, allRequestsRes, pendingRequestsRes] =
         await Promise.all([
-          fetch('http://127.0.0.1:8000/api/v1/admin/users?skip=0&limit=100', {
+          fetch('${import.meta.env.VITE_API_URL}/api/v1/admin/users?skip=0&limit=100', {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('http://127.0.0.1:8000/api/v1/products?skip=0&limit=100', {
+          fetch('${import.meta.env.VITE_API_URL}/api/v1/products?skip=0&limit=100', {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('http://127.0.0.1:8000/api/v1/orders?skip=0&limit=100', {
+          fetch('${import.meta.env.VITE_API_URL}/api/v1/orders?skip=0&limit=100', {
             headers: { Authorization: `Bearer ${token}` },
           }),
           requestService.listAll({ limit: 5 }),

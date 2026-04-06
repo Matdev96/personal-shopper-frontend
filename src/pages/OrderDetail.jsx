@@ -24,7 +24,7 @@ export default function OrderDetail() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/api/v1/orders/${orderId}`,
+        `${import.meta.env.VITE_API_URL}/api/v1/orders/${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
