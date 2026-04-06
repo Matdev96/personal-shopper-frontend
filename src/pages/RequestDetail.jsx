@@ -125,7 +125,21 @@ export default function RequestDetail() {
           <p className="text-sm text-gray-400">Criado em {formatDate(req.created_at)}</p>
         </div>
 
-        {/* Alerta de aç��o necessária */}
+        {/* Alerta de cancelamento */}
+        {req.status === 'cancelado' && (
+          <div className="bg-red-50 border border-red-300 rounded-xl p-5 mb-6">
+            <h3 className="font-bold text-red-800 mb-1">Solicitação Cancelada</h3>
+            {req.admin_notes ? (
+              <p className="text-red-700 text-sm">
+                <strong>Motivo:</strong> {req.admin_notes}
+              </p>
+            ) : (
+              <p className="text-red-700 text-sm">Nenhum motivo informado. Entre em contato com a Claudia para mais detalhes.</p>
+            )}
+          </div>
+        )}
+
+        {/* Alerta de ação necessária */}
         {needsConfirmation && (
           <div className="bg-yellow-50 border border-yellow-300 rounded-xl p-5 mb-6">
             <h3 className="font-bold text-yellow-800 mb-1">A Claudia encontrou seu produto!</h3>
@@ -241,6 +255,12 @@ export default function RequestDetail() {
             )}
             {req.notes && (
               <div className="sm:col-span-2"><p className="text-gray-500">Observações</p><p className="text-gray-900">{req.notes}</p></div>
+            )}
+            {req.admin_notes && req.status === 'cancelado' && (
+              <div className="sm:col-span-2">
+                <p className="text-gray-500">Motivo do cancelamento</p>
+                <p className="text-red-700 font-semibold">{req.admin_notes}</p>
+              </div>
             )}
           </div>
         </div>
