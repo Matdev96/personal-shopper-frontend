@@ -37,13 +37,13 @@ export default function AdminDashboard() {
 
       const [usersRes, productsRes, ordersRes, allRequestsRes, pendingRequestsRes] =
         await Promise.all([
-          fetch('${import.meta.env.VITE_API_URL}/api/v1/admin/users?skip=0&limit=100', {
+          fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users?skip=0&limit=100`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('${import.meta.env.VITE_API_URL}/api/v1/products?skip=0&limit=100', {
+          fetch(`${import.meta.env.VITE_API_URL}/api/v1/products?skip=0&limit=100`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch('${import.meta.env.VITE_API_URL}/api/v1/orders?skip=0&limit=100', {
+          fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users/orders/all?limit=200`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
           requestService.listAll({ limit: 5 }),
@@ -53,7 +53,8 @@ export default function AdminDashboard() {
       const usersData = usersRes.ok ? await usersRes.json() : [];
       const productsJson = productsRes.ok ? await productsRes.json() : {};
       const productsData = productsJson.items ?? productsJson ?? [];
-      const ordersData = ordersRes.ok ? await ordersRes.json() : [];
+      const ordersJson = ordersRes.ok ? await ordersRes.json() : { items: [], total: 0 };
+      const ordersData = ordersJson.items ?? [];
 
       const recent = allRequestsRes.items ?? [];
       const pending = pendingRequestsRes.items ?? [];
@@ -62,13 +63,13 @@ export default function AdminDashboard() {
       const urgentCount = recent.filter((r) => URGENT_STATUSES.includes(r.status)).length;
 
       const totalRevenue = Array.isArray(ordersData)
-        ? ordersData.reduce((sum, order) => sum + (order.total || 0), 0)
+        ? ordersData.reduce((sum, order) => sum + (order.total_price || 0), 0)
         : 0;
 
       setStats({
         totalUsers: Array.isArray(usersData) ? usersData.length : 0,
         totalProducts: Array.isArray(productsData) ? productsData.length : 0,
-        totalOrders: Array.isArray(ordersData) ? ordersData.length : 0,
+        totalOrders: ordersJson.total ?? ordersData.length,
         totalRevenue,
         totalRequests: allRequestsRes.total ?? recent.length,
         pendingRequests: pendingRequestsRes.total ?? pending.length,

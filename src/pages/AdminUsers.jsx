@@ -24,7 +24,7 @@ export default function AdminUsers() {
     try {
       setIsLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('${import.meta.env.VITE_API_URL}/api/v1/admin/users?limit=100', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users?limit=100`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -39,6 +39,26 @@ export default function AdminUsers() {
       console.error(error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleToggleActive = async (userId, isCurrentlyActive) => {
+    const acao = isCurrentlyActive ? 'desativar' : 'ativar';
+    if (!window.confirm(`Tem certeza que deseja ${acao} este usuário?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/users/${userId}/toggle-active`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error();
+
+      toast.success(`Usuário ${isCurrentlyActive ? 'desativado' : 'ativado'} com sucesso`);
+      fetchUsers();
+    } catch {
+      toast.error('Erro ao alterar status do usuário');
     }
   };
 
@@ -196,6 +216,12 @@ export default function AdminUsers() {
                         className="text-blue-600 hover:text-blue-700 font-semibold"
                       >
                         Ver Pedidos
+                      </button>
+                      <button
+                        onClick={() => handleToggleActive(u.id, u.is_active)}
+                        className={`font-semibold ${u.is_active ? 'text-yellow-600 hover:text-yellow-700' : 'text-green-600 hover:text-green-700'}`}
+                      >
+                        {u.is_active ? 'Desativar' : 'Ativar'}
                       </button>
                       <button
                         onClick={() => handleDeleteUser(u.id)}
