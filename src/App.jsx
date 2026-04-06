@@ -27,6 +27,7 @@ import Requests from './pages/Requests';
 import RequestNew from './pages/RequestNew';
 import RequestDetail from './pages/RequestDetail';
 
+import NotFound from './pages/NotFound';
 import useAuthStore from './store/authStore';
 import './App.css';
 
@@ -141,6 +142,9 @@ function App() {
               />
               <Route path="/admin/requests" element={<ProtectedRoute adminOnly><AdminRequests /></ProtectedRoute>} />
               <Route path="/admin/requests/:requestId" element={<ProtectedRoute adminOnly><AdminRequestDetail /></ProtectedRoute>} />
+
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           <Footer />
