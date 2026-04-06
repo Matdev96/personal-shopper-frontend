@@ -40,6 +40,21 @@ export default function RequestDetail() {
 
   useEffect(() => { load(); }, [requestId]);
 
+  const handleAcceptAlternative = async () => {
+    if (!window.confirm('Aceitar a alternativa sugerida pela Claudia e prosseguir com a compra?')) return;
+    setActionLoading(true);
+    try {
+      const updated = await requestService.acceptAlternative(requestId);
+      setReq(updated);
+      toast.success('Alternativa aceita! Confirme o preço para prosseguir.');
+      setPaymentForm((p) => ({ ...p, type: 'sinal', amount: updated.deposit_amount }));
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Erro ao aceitar alternativa.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleConfirm = async () => {
     if (!window.confirm('Confirmar o preço cotado pela Claudia?')) return;
     setActionLoading(true);
@@ -100,7 +115,7 @@ export default function RequestDetail() {
 
   if (!req) return null;
 
-  const isCancellable = ['pendente', 'em_busca'].includes(req.status);
+  const isCancellable = ['pendente', 'em_busca', 'alternativa_disponivel'].includes(req.status);
   const needsConfirmation = req.status === 'aguardando_confirmacao';
   const needsPayment = ['aguardando_sinal', 'aguardando_pagamento_final'].includes(req.status);
 
@@ -136,6 +151,49 @@ export default function RequestDetail() {
             ) : (
               <p className="text-red-700 text-sm">Nenhum motivo informado. Entre em contato com a Claudia para mais detalhes.</p>
             )}
+          </div>
+        )}
+
+        {/* Alternativa disponível */}
+        {req.status === 'alternativa_disponivel' && (
+          <div className="bg-amber-50 border border-amber-300 rounded-xl p-5 mb-6">
+            <h3 className="font-bold text-amber-800 mb-2">A Claudia encontrou uma alternativa!</h3>
+            <p className="text-amber-700 text-sm mb-3">{req.admin_notes}</p>
+            {req.found_image_url && (
+              <a href={req.found_image_url} target="_blank" rel="noreferrer"
+                className="inline-block text-blue-600 underline text-sm mb-3">
+                Ver foto da alternativa
+              </a>
+            )}
+            <p className="text-amber-700 text-sm mb-4">
+              Preço: <strong>R$ {Number(req.quoted_price).toFixed(2)}</strong>
+              {' '}— Sinal: <strong>R$ {Number(req.deposit_amount).toFixed(2)}</strong>
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={handleAcceptAlternative}
+                disabled={actionLoading}
+                className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50"
+              >
+                Aceitar e Prosseguir
+              </button>
+              <button
+                onClick={handleCancel}
+                disabled={actionLoading}
+                className="border border-red-300 text-red-600 hover:bg-red-50 px-5 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50"
+              >
+                Recusar e Cancelar
+              </button>
+              <a
+                href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Olá Claudia! Tenho dúvidas sobre a alternativa encontrada para minha solicitação: ${req.title}`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="border border-green-500 text-green-700 hover:bg-green-50 px-5 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+              >
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.121 1.533 5.849L.057 23.012a1 1 0 001.217 1.217l6.19-1.49A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.848 0-3.578-.497-5.07-1.367l-.361-.214-3.736.899.916-3.645-.235-.374A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                Conversar no WhatsApp
+              </a>
+            </div>
           </div>
         )}
 

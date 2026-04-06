@@ -20,6 +20,8 @@ export default function AdminRequestDetail() {
 
   const [quoteForm, setQuoteForm] = useState({ quoted_price: '', found_image_url: '', admin_notes: '' });
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [alternativeForm, setAlternativeForm] = useState({ quoted_price: '', alternative_description: '', found_image_url: '' });
+  const [showAlternativeForm, setShowAlternativeForm] = useState(false);
   const [cancelNotes, setCancelNotes] = useState('');
   const [showCancelForm, setShowCancelForm] = useState(false);
 
@@ -71,6 +73,25 @@ export default function AdminRequestDetail() {
     }
   };
 
+  const handleSuggestAlternative = async (e) => {
+    e.preventDefault();
+    setActionLoading(true);
+    try {
+      const updated = await requestService.adminSuggestAlternative(requestId, {
+        quoted_price: Number(alternativeForm.quoted_price),
+        alternative_description: alternativeForm.alternative_description,
+        found_image_url: alternativeForm.found_image_url || null,
+      });
+      setReq(updated);
+      setShowAlternativeForm(false);
+      toast.success('Alternativa enviada ao cliente!');
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Erro ao sugerir alternativa.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleCancel = async () => {
     if (!window.confirm('Cancelar esta solicitação?')) return;
     setActionLoading(true);
@@ -115,6 +136,7 @@ export default function AdminRequestDetail() {
 
   const canAdvance = !!NEXT_STATUS[req.status];
   const canQuote = req.status === 'encontrado';
+  const canSuggestAlternative = ['em_busca', 'encontrado'].includes(req.status);
   const isFinished = ['entregue', 'cancelado', 'nao_encontrado'].includes(req.status);
   const pendingPayments = req.payments?.filter((p) => p.status === 'pendente') ?? [];
 
@@ -207,6 +229,14 @@ export default function AdminRequestDetail() {
                   Cotar Preço
                 </button>
               )}
+              {canSuggestAlternative && !showAlternativeForm && !showQuoteForm && (
+                <button
+                  onClick={() => setShowAlternativeForm(true)}
+                  className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold transition-colors"
+                >
+                  Sugerir Alternativa
+                </button>
+              )}
               {!showCancelForm && (
                 <button
                   onClick={() => setShowCancelForm(true)}
@@ -262,6 +292,60 @@ export default function AdminRequestDetail() {
                     Enviar Cotação
                   </button>
                   <button type="button" onClick={() => setShowQuoteForm(false)}
+                    className="border border-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50">
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Formulário de alternativa */}
+            {showAlternativeForm && (
+              <form onSubmit={handleSuggestAlternative} className="mt-5 space-y-3 border-t pt-5">
+                <h3 className="font-semibold text-amber-700">Sugerir Alternativa ao Cliente</h3>
+                <p className="text-sm text-gray-500">Descreva o que foi encontrado (cor diferente, modelo similar, etc.) e informe o preço. O cliente poderá aceitar ou cancelar.</p>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">O que foi encontrado *</label>
+                  <textarea
+                    value={alternativeForm.alternative_description}
+                    onChange={(e) => setAlternativeForm((p) => ({ ...p, alternative_description: e.target.value }))}
+                    rows={2}
+                    required
+                    className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    placeholder="Ex: Encontramos o mesmo modelo mas apenas na cor azul. Está disponível no tamanho M."
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Preço da alternativa (R$) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      value={alternativeForm.quoted_price}
+                      onChange={(e) => setAlternativeForm((p) => ({ ...p, quoted_price: e.target.value }))}
+                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      placeholder="Ex: 180.00"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Foto da alternativa (URL)</label>
+                    <input
+                      type="url"
+                      value={alternativeForm.found_image_url}
+                      onChange={(e) => setAlternativeForm((p) => ({ ...p, found_image_url: e.target.value }))}
+                      className="w-full px-3 py-2 border border-amber-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400"
+                      placeholder="Link da foto do produto disponível"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button type="submit" disabled={actionLoading}
+                    className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-lg font-semibold disabled:opacity-50">
+                    Enviar ao Cliente
+                  </button>
+                  <button type="button" onClick={() => setShowAlternativeForm(false)}
                     className="border border-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold hover:bg-gray-50">
                     Cancelar
                   </button>

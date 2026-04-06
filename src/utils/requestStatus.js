@@ -13,6 +13,7 @@ export const STATUS_LABEL = {
   entregue: 'Entregue',
   nao_encontrado: 'Não Encontrado',
   cancelado: 'Cancelado',
+  alternativa_disponivel: 'Alternativa Disponível',
 };
 
 export const STATUS_COLOR = {
@@ -30,6 +31,7 @@ export const STATUS_COLOR = {
   entregue: 'bg-green-100 text-green-800',
   nao_encontrado: 'bg-red-100 text-red-700',
   cancelado: 'bg-red-200 text-red-800',
+  alternativa_disponivel: 'bg-amber-100 text-amber-800',
 };
 
 export const PAYMENT_METHOD_LABEL = {
