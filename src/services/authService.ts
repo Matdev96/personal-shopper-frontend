@@ -87,6 +87,24 @@ const authService = {
     }
   },
 
+  forgotPassword: async (email: string): Promise<void> => {
+    try {
+      await api.post('/auth/forgot-password', null, { params: { email } });
+    } catch (error: any) {
+      const data = error.response?.data;
+      throw { detail: data?.detail || 'Erro ao solicitar recuperação de senha.' };
+    }
+  },
+
+  resetPassword: async (token: string, new_password: string): Promise<void> => {
+    try {
+      await api.post('/auth/reset-password', null, { params: { token, new_password } });
+    } catch (error: any) {
+      const data = error.response?.data;
+      throw { detail: data?.detail || 'Erro ao redefinir senha.' };
+    }
+  },
+
   logout: (): void => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

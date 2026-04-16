@@ -107,6 +107,11 @@ export default function Login() {
             {errors.password && (
               <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
             )}
+            <div className="text-right mt-1">
+              <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
+                Esqueceu a senha?
+              </Link>
+            </div>
           </div>
 
           {/* Banner de erro de credenciais */}
