@@ -8,6 +8,14 @@ export interface User {
   full_name: string;
   is_admin: boolean;
   is_active: boolean;
+  cep?: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  retirar_na_loja?: boolean;
 }
 
 export interface LoginResponse {
@@ -20,6 +28,14 @@ export interface UpdateUserData {
   email?: string;
   full_name?: string;
   password?: string;
+  cep?: string;
+  logradouro?: string;
+  numero?: string;
+  complemento?: string;
+  bairro?: string;
+  cidade?: string;
+  estado?: string;
+  retirar_na_loja?: boolean;
 }
 
 const authService = {
