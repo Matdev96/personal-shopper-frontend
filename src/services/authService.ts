@@ -60,7 +60,11 @@ const authService = {
 
       return response.data;
     } catch (error: any) {
-      throw error.response?.data || error.message;
+      const data = error.response?.data;
+      if (data) {
+        throw { detail: data.detail || data.error || 'Erro ao fazer login' };
+      }
+      throw { detail: 'Servidor indisponível. Tente novamente mais tarde.' };
     }
   },
 
