@@ -40,6 +40,7 @@ O repositório do backend está em: [personal-shopper-backend](https://github.co
 - Registro e login com JWT
 - Persistência de sessão via localStorage
 - Rotas protegidas por autenticação e nível de acesso (admin)
+- Feedback de erro inline no login: banner com mensagem, bordas vermelhas nos campos e botão mostrar/ocultar senha
 
 **Catálogo e Compras**
 - Listagem de produtos com filtros por categoria, preço e busca por texto
