@@ -41,6 +41,7 @@ O repositório do backend está em: [personal-shopper-backend](https://github.co
 - Persistência de sessão via localStorage
 - Rotas protegidas por autenticação e nível de acesso (admin)
 - Feedback de erro inline no login: banner com mensagem, bordas vermelhas nos campos e botão mostrar/ocultar senha
+- Recuperação de senha por email: link "Esqueceu a senha?" → formulário de email → link no Gmail → redefinição com validação
 
 **Catálogo e Compras**
 - Listagem de produtos com filtros por categoria, preço e busca por texto
@@ -108,6 +109,8 @@ personal-shopper-frontend/
 | `/products` | Catálogo com filtros e busca | Público |
 | `/products/:id` | Detalhe do produto | Público |
 | `/login` / `/register` | Autenticação | Público |
+| `/forgot-password` | Solicitar recuperação de senha | Público |
+| `/reset-password` | Redefinir senha com token do email | Público |
 | `/profile` | Perfil e endereço de entrega | Usuário |
 | `/cart` | Carrinho de compras | Usuário |
 | `/checkout` | Finalização de pedido | Usuário |
