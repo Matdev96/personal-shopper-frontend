@@ -2,19 +2,18 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
 export default function Login() {
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, clearErrors } = useForm();
   const { login, isLoading } = useAuthStore();
-
   const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [focusField, setFocusField] = useState(null);
 
-  const handleFieldChange = () => {
-    if (loginError) setLoginError('');
-  };
+  const handleFieldChange = () => { if (loginError) setLoginError(''); };
 
   const onSubmit = async (data) => {
     setLoginError('');
@@ -23,124 +22,115 @@ export default function Login() {
       toast.success('Login realizado com sucesso!');
       navigate('/');
     } catch (error) {
-      const message = error?.detail || 'Erro ao fazer login';
-      setLoginError(message);
+      setLoginError(error?.detail || 'Email ou senha incorretos');
     }
   };
 
-  const hasCredentialError = !!loginError;
+  const fieldStyle = (name, hasError) => ({
+    width: '100%',
+    fontFamily: 'var(--font-body)', fontSize: 15,
+    padding: '11px 12px',
+    paddingRight: name === 'password' ? 40 : 12,
+    borderRadius: 'var(--r-input)',
+    background: '#fff', color: 'var(--ink-1)',
+    outline: 'none',
+    border: `1px solid ${hasError ? 'var(--err-border)' : focusField === name ? 'var(--gold)' : 'var(--line-strong)'}`,
+    boxShadow: hasError ? '0 0 0 3px rgba(162,58,47,.10)' : focusField === name ? '0 0 0 3px rgba(219,169,56,.18)' : 'none',
+    transition: 'all var(--dur) var(--ease)',
+  });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">
-          Login
-        </h2>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              {...register('email', {
-                required: 'Email é obrigatório',
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Email inválido',
-                },
-                onChange: handleFieldChange,
-              })}
-              className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                hasCredentialError || errors.email
-                  ? 'border-red-400 focus:ring-red-400'
-                  : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-              }`}
-              placeholder="seu@email.com"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
+    <div style={{ minHeight: 'calc(100vh - 68px)', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+      {/* Left — brand panel */}
+      <div style={{ background: 'linear-gradient(150deg, #2c2a2b, #3a3637)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', padding: '64px 56px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 9, background: 'var(--gold)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18 }}>PS</div>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 19, color: '#fff' }}>Personal Shopper</span>
           </div>
-
-          {/* Senha */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Senha
-            </label>
-            <div className="relative mt-1">
+            <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 16 }}>Bem-vindo de volta</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 36, lineHeight: 1.15, color: '#fff', margin: 0, maxWidth: 380 }}>Os melhores importados, escolhidos a dedo.</h2>
+          </div>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,.5)', margin: 0 }}>Entre para acompanhar pedidos e solicitações de busca.</p>
+        </div>
+      </div>
+
+      {/* Right — form */}
+      <div style={{ background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+        <div style={{ width: '100%', maxWidth: 400, background: '#fff', border: '1px solid var(--line)', borderRadius: 'var(--r-card)', padding: 36, boxShadow: 'var(--shadow-md)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--ink-1)', margin: '0 0 6px', textAlign: 'center' }}>Entrar</h1>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink-3)', textAlign: 'center', margin: '0 0 24px' }}>Acesse sua conta</p>
+
+          <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {/* Email */}
+            <div>
+              <label style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 500, color: 'var(--ink-2)', display: 'block', marginBottom: 6 }}>Email</label>
               <input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                {...register('password', {
-                  required: 'Senha é obrigatória',
-                  onChange: handleFieldChange,
-                })}
-                className={`block w-full px-3 py-2 pr-10 border rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                  hasCredentialError || errors.password
-                    ? 'border-red-400 focus:ring-red-400'
-                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                }`}
-                placeholder="••••••••"
+                type="email"
+                {...register('email', { required: 'Email é obrigatório', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: 'Email inválido' }, onChange: handleFieldChange })}
+                style={fieldStyle('email', !!(loginError || errors.email))}
+                placeholder="seu@email.com"
+                onFocus={() => setFocusField('email')}
+                onBlur={() => setFocusField(null)}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600"
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                )}
-              </button>
+              {errors.email && <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--err-fg)', marginTop: 4 }}>{errors.email.message}</p>}
             </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+
+            {/* Senha */}
+            <div>
+              <label style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 500, color: 'var(--ink-2)', display: 'block', marginBottom: 6 }}>Senha</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password', { required: 'Senha é obrigatória', onChange: handleFieldChange })}
+                  style={fieldStyle('password', !!(loginError || errors.password))}
+                  placeholder="••••••••"
+                  onFocus={() => setFocusField('password')}
+                  onBlur={() => setFocusField(null)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  tabIndex={-1}
+                  style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-4)', display: 'flex' }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {errors.password && <p style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'var(--err-fg)', marginTop: 4 }}>{errors.password.message}</p>}
+              <div style={{ textAlign: 'right', marginTop: 6 }}>
+                <Link to="/forgot-password" style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--gold-deep)', textDecoration: 'none' }}>
+                  Esqueceu a senha?
+                </Link>
+              </div>
+            </div>
+
+            {/* Erro de credenciais */}
+            {loginError && (
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--err-bg)', border: '1px solid var(--err-border)', borderRadius: 8, padding: '10px 14px' }}>
+                <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--err-fg)' }}>{loginError}</span>
+              </div>
             )}
-            <div className="text-right mt-1">
-              <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
-                Esqueceu a senha?
-              </Link>
-            </div>
-          </div>
 
-          {/* Banner de erro de credenciais */}
-          {loginError && (
-            <div className="flex items-start gap-3 bg-red-50 border border-red-300 rounded-md px-4 py-3">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500 mt-0.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              <p className="text-sm text-red-700">{loginError}</p>
-            </div>
-          )}
+            {/* Submit */}
+            <button
+              type="submit" disabled={isLoading}
+              style={{ width: '100%', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, background: isLoading ? 'var(--ink-4)' : 'var(--gold)', color: '#fff', border: 'none', padding: '12px', borderRadius: 'var(--r-btn)', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'background var(--dur) var(--ease)' }}
+              onMouseEnter={(e) => { if (!isLoading) e.currentTarget.style.background = 'var(--gold-strong)'; }}
+              onMouseLeave={(e) => { if (!isLoading) e.currentTarget.style.background = 'var(--gold)'; }}
+            >
+              {isLoading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </form>
 
-          {/* Botão de Login */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
-          >
-            {isLoading ? 'Carregando...' : 'Entrar'}
-          </button>
-        </form>
-
-        {/* Link para Registro */}
-        <p className="mt-4 text-center text-sm text-gray-600">
-          Não tem conta?{' '}
-          <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
-            Registre-se aqui
-          </Link>
-        </p>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink-3)', textAlign: 'center', marginTop: 20 }}>
+            Não tem conta?{' '}
+            <Link to="/register" style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 600, color: 'var(--gold-deep)', textDecoration: 'none' }}>
+              Registre-se aqui
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

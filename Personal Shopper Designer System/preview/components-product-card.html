@@ -1,0 +1,25 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>
+.card{width:240px;background:#fff;border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;box-shadow:var(--shadow-md)}
+.ph{height:150px;background:linear-gradient(135deg,var(--rose-soft),var(--rose));display:flex;align-items:center;justify-content:center;color:var(--rose-deep);font-family:var(--font-body);font-size:13px}
+.body{padding:14px 16px 16px}
+.name{font-family:var(--font-display);font-weight:600;font-size:17px;color:var(--ink-1);margin:0 0 4px}
+.desc{font-family:var(--font-body);font-size:13px;color:var(--ink-3);margin:0 0 12px}
+.foot{display:flex;align-items:center;justify-content:space-between}
+.price{font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--ink-1)}
+.stock{font-family:var(--font-body);font-size:11px;font-weight:600;padding:4px 9px;border-radius:999px;background:var(--ok-bg);color:var(--ok-fg)}
+</style></head>
+<body>
+<div style="display:flex;gap:18px;align-items:center">
+  <div class="card">
+    <div class="ph">Imagem do produto</div>
+    <div class="body">
+      <p class="name">Tênis Nike Air Max</p>
+      <p class="desc">Importado · edição limitada dos EUA</p>
+      <div class="foot"><span class="price">R$ 899,90</span><span class="stock">8 em estoque</span></div>
+    </div>
+  </div>
+  <div style="font-family:var(--font-body);font-size:13px;color:var(--ink-3);max-width:300px">Product card — white surface, 10px radius, hairline border + soft shadow. Serif name &amp; price, sans meta. Image scales 1.05 on hover; card lifts to <span class="mono">shadow-lg</span>.</div>
+</div>
+</body></html>

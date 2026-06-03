@@ -1,184 +1,206 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { ShoppingBag, ChevronDown, Menu } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import useCartStore from '../store/cartStore';
 
 export default function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout, isAuthenticated } = useAuthStore();
   const { items } = useCartStore();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     toast.success('Logout realizado com sucesso!');
     navigate('/');
-    setIsMenuOpen(false);
+    setMenuOpen(false);
   };
 
+  const isActive = (path) => location.pathname === path;
+
+  const NavLink = ({ to, children }) => (
+    <Link
+      to={to}
+      onClick={() => setMobileOpen(false)}
+      style={{
+        fontFamily: 'var(--font-body)',
+        fontSize: 14,
+        fontWeight: isActive(to) ? 600 : 500,
+        color: isActive(to) ? 'var(--gold-deep)' : 'var(--ink-2)',
+        textDecoration: 'none',
+        transition: 'color var(--dur) var(--ease)',
+        padding: '4px 0',
+        borderBottom: isActive(to) ? '2px solid var(--gold)' : '2px solid transparent',
+      }}
+      onMouseEnter={(e) => { if (!isActive(to)) e.currentTarget.style.color = 'var(--ink-1)'; }}
+      onMouseLeave={(e) => { if (!isActive(to)) e.currentTarget.style.color = 'var(--ink-2)'; }}
+    >
+      {children}
+    </Link>
+  );
+
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xl">
-              PS
-            </div>
-            <span className="hidden md:inline text-xl font-bold text-gray-900">
-              Personal Shopper
-            </span>
+    <header style={{
+      position: 'sticky', top: 0, zIndex: 50,
+      background: 'rgba(255,255,255,0.95)',
+      backdropFilter: 'blur(10px)',
+      boxShadow: 'var(--shadow-sm)',
+    }}>
+      <div style={{
+        maxWidth: 'var(--container-wide)', margin: '0 auto',
+        padding: '0 28px', height: 68,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
+      }}>
+        {/* Logo */}
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
+          <div style={{
+            width: 38, height: 38, borderRadius: 9,
+            background: 'var(--charcoal)', color: 'var(--gold)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17,
+          }}>PS</div>
+          <span className="hidden md:inline" style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18, color: 'var(--ink-1)' }}>
+            Personal Shopper
+          </span>
+        </Link>
+
+        {/* Nav Desktop */}
+        <nav className="hidden md:flex" style={{ alignItems: 'center', gap: 28 }}>
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/products">Produtos</NavLink>
+          {isAuthenticated && <NavLink to="/orders">Pedidos</NavLink>}
+          {isAuthenticated && <NavLink to="/requests">Solicitações</NavLink>}
+          {user?.is_admin && <NavLink to="/admin/dashboard">Dashboard</NavLink>}
+        </nav>
+
+        {/* Right side */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          {/* Cart */}
+          <Link to="/cart" style={{ position: 'relative', color: 'var(--ink-1)', display: 'flex', textDecoration: 'none' }}>
+            <ShoppingBag size={22} strokeWidth={1.8} />
+            {items.length > 0 && (
+              <span style={{
+                position: 'absolute', top: -7, right: -8,
+                background: 'var(--gold)', color: '#fff',
+                fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-body)',
+                width: 17, height: 17, borderRadius: 999,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>{items.length}</span>
+            )}
           </Link>
 
-          {/* Menu Desktop */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
-              Home
-            </Link>
-            <Link to="/products" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
-              Produtos
-            </Link>
-
-            {isAuthenticated && (
-              <>
-                <Link to="/orders" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
-                  Pedidos
-                </Link>
-                <Link to="/requests" className="text-gray-700 hover:text-blue-600 font-semibold transition-colors">
-                  Solicitações
-                </Link>
-                {user?.is_admin && (
-                  <Link to="/admin/dashboard" className="text-purple-600 hover:text-purple-800 font-semibold transition-colors">
-                    Dashboard
-                  </Link>
-                )}
-              </>
-            )}
-          </nav>
-
-          {/* Ações Direita */}
-          <div className="flex items-center gap-4">
-            {/* Carrinho */}
-            <Link
-              to="/cart"
-              className="relative text-gray-700 hover:text-blue-600 transition-colors"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {/* Auth */}
+          {isAuthenticated ? (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-1)' }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
-              {items.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {items.length}
+                <span style={{
+                  width: 32, height: 32, borderRadius: 999,
+                  background: 'var(--gold-tint)', color: 'var(--gold-deep)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: 13,
+                }}>
+                  {user?.full_name?.charAt(0) || 'U'}
                 </span>
-              )}
-            </Link>
+                <span className="hidden md:inline" style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500 }}>
+                  {user?.full_name?.split(' ')[0] || 'Usuário'}
+                </span>
+                <ChevronDown size={14} style={{ color: 'var(--ink-3)' }} />
+              </button>
 
-            {/* Autenticação */}
-            {isAuthenticated ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
-                  className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
-                  <span className="hidden md:inline font-semibold">{user?.full_name || 'Usuário'}</span>
-                </button>
-
-                {/* Menu Dropdown */}
-                {isMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                    <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Meu Perfil
-                    </Link>
-                    <Link
-                      to="/orders"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Meus Pedidos
-                    </Link>
-                    <Link
-                      to="/requests"
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Minhas Solicitações
-                    </Link>
+              {menuOpen && (
+                <>
+                  <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setMenuOpen(false)} />
+                  <div style={{
+                    position: 'absolute', right: 0, top: 'calc(100% + 10px)',
+                    width: 200, background: '#fff',
+                    borderRadius: 10, boxShadow: 'var(--shadow-lg)',
+                    border: '1px solid var(--line)', overflow: 'hidden',
+                    padding: '6px 0', zIndex: 50,
+                  }}>
+                    {[
+                      ['/profile', 'Meu Perfil'],
+                      ['/orders', 'Meus Pedidos'],
+                      ['/requests', 'Minhas Solicitações'],
+                    ].map(([path, label]) => (
+                      <Link
+                        key={path} to={path}
+                        onClick={() => setMenuOpen(false)}
+                        style={{ display: 'block', padding: '10px 16px', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--ink-2)', textDecoration: 'none' }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-2)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                      >{label}</Link>
+                    ))}
                     {user?.is_admin && (
                       <Link
                         to="/admin/dashboard"
-                        className="block px-4 py-2 text-purple-600 hover:bg-gray-100 font-semibold transition-colors border-t"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        Dashboard Admin
-                      </Link>
+                        onClick={() => setMenuOpen(false)}
+                        style={{ display: 'block', padding: '10px 16px', fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 600, color: 'var(--gold-deep)', textDecoration: 'none', borderTop: '1px solid var(--line)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gold-wash)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                      >Dashboard Admin</Link>
                     )}
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors border-t"
-                    >
-                      Logout
-                    </button>
+                      style={{ width: '100%', textAlign: 'left', padding: '10px 16px', background: 'none', border: 'none', borderTop: '1px solid var(--line)', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: 14, color: 'var(--err-fg)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--err-bg)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                    >Sair</button>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex gap-2">
-                <Link
-                  to="/login"
-                  className="text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-                >
-                  Registrar
-                </Link>
-              </div>
-            )}
+                </>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Link to="/login" style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 500, color: 'var(--ink-2)', textDecoration: 'none' }}>
+                Entrar
+              </Link>
+              <Link
+                to="/register"
+                style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 600, background: 'var(--gold)', color: '#fff', textDecoration: 'none', padding: '9px 18px', borderRadius: 'var(--r-btn)', transition: 'background var(--dur) var(--ease)' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gold-strong)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'var(--gold)'}
+              >Cadastrar</Link>
+            </div>
+          )}
 
-            {/* Menu Mobile */}
-            <button className="md:hidden text-gray-700 hover:text-blue-600 transition-colors">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
-            </button>
-          </div>
+          {/* Mobile burger */}
+          <button
+            className="md:hidden"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-1)', display: 'flex' }}
+          >
+            <Menu size={22} />
+          </button>
         </div>
       </div>
+
+      {/* Mobile nav drawer */}
+      {mobileOpen && (
+        <div className="md:hidden" style={{ background: '#fff', borderTop: '1px solid var(--line)', padding: '12px 24px 20px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {[
+            ['/', 'Home'],
+            ['/products', 'Produtos'],
+            ...(isAuthenticated ? [['/orders', 'Pedidos'], ['/requests', 'Solicitações']] : []),
+            ...(user?.is_admin ? [['/admin/dashboard', 'Dashboard Admin']] : []),
+          ].map(([path, label]) => (
+            <Link key={path} to={path} onClick={() => setMobileOpen(false)} style={{ padding: '11px 4px', fontFamily: 'var(--font-body)', fontSize: 15, fontWeight: 500, color: isActive(path) ? 'var(--gold-deep)' : 'var(--ink-1)', textDecoration: 'none', borderBottom: '1px solid var(--line)' }}>
+              {label}
+            </Link>
+          ))}
+          {isAuthenticated ? (
+            <button onClick={handleLogout} style={{ textAlign: 'left', padding: '11px 4px', marginTop: 4, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--err-fg)' }}>Sair</button>
+          ) : (
+            <Link to="/login" onClick={() => setMobileOpen(false)} style={{ padding: '11px 4px', fontFamily: 'var(--font-body)', fontSize: 15, color: 'var(--gold-deep)', textDecoration: 'none', fontWeight: 600 }}>Entrar</Link>
+          )}
+        </div>
+      )}
     </header>
   );
 }

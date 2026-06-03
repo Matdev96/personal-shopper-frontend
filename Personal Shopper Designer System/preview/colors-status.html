@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>
+.badge{display:inline-flex;align-items:center;font-family:var(--font-body);font-weight:600;font-size:12px;padding:5px 12px;border-radius:var(--r-badge);line-height:1}
+.g{display:flex;flex-wrap:wrap;gap:9px}
+</style></head>
+<body>
+<div class="g">
+  <span class="badge" style="background:var(--status-pending-bg);color:var(--status-pending-fg)">Pendente</span>
+  <span class="badge" style="background:var(--status-search-bg);color:var(--status-search-fg)">Em Busca</span>
+  <span class="badge" style="background:var(--status-found-bg);color:var(--status-found-fg)">Encontrado</span>
+  <span class="badge" style="background:var(--status-confirm-bg);color:var(--status-confirm-fg)">Confirmado</span>
+  <span class="badge" style="background:var(--status-pay-bg);color:var(--status-pay-fg)">Aguardando Sinal (50%)</span>
+  <span class="badge" style="background:var(--status-bought-bg);color:var(--status-bought-fg)">Comprado</span>
+  <span class="badge" style="background:var(--status-success-bg);color:var(--status-success-fg)">Entregue</span>
+  <span class="badge" style="background:var(--status-alt-bg);color:var(--status-alt-fg)">Alternativa Disponível</span>
+  <span class="badge" style="background:var(--status-danger-bg);color:var(--status-danger-fg)">Cancelado</span>
+</div>
+<div style="margin-top:16px;font-family:var(--font-body);font-size:13px;color:var(--ink-3)">Status pills (999px) for the request lifecycle. Core map: <b style="color:var(--status-pending-fg)">amber</b>=pendente · <b style="color:var(--status-search-fg)">blue</b>=em busca · <b style="color:var(--status-success-fg)">green</b>=entregue · <b style="color:var(--status-danger-fg)">red</b>=cancelado.</div>
+</body></html>

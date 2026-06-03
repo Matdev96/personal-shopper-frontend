@@ -1,0 +1,17 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>
+.fld{display:flex;flex-direction:column;gap:6px;flex:1}
+label{font-family:var(--font-body);font-size:13px;font-weight:500;color:var(--ink-2)}
+input{font-family:var(--font-body);font-size:15px;padding:10px 12px;border-radius:var(--r-input);border:1px solid var(--line-strong);background:#fff;color:var(--ink-1);outline:none}
+.focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(219,169,56,.22)}
+.err{border-color:var(--err-border);box-shadow:0 0 0 3px rgba(162,58,47,.12)}
+.errmsg{font-size:12px;color:var(--err-fg)}
+</style></head>
+<body>
+<div class="row" style="gap:18px;align-items:flex-start">
+  <div class="fld"><label>Email</label><input value="ana@email.com"></div>
+  <div class="fld"><label>Senha</label><input class="focus" type="text" value="••••••••"><span style="font-size:12px;color:var(--gold-deep)">focus — gold ring</span></div>
+  <div class="fld"><label>CEP</label><input class="err" value="0000"><span class="errmsg">CEP inválido</span></div>
+</div>
+</body></html>

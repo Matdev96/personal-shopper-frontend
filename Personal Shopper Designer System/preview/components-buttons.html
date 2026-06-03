@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>
+.btn{font-family:var(--font-body);font-weight:600;font-size:15px;border-radius:var(--r-btn);padding:11px 22px;border:1px solid transparent;cursor:pointer;transition:all var(--dur) var(--ease)}
+.btn-primary{background:var(--gold);color:#fff}
+.btn-secondary{background:var(--charcoal);color:#fff}
+.btn-ghost{background:#fff;color:var(--ink-1);border-color:var(--line-strong)}
+.btn-disabled{background:var(--surface-2);color:var(--ink-4);cursor:not-allowed;border-color:var(--line)}
+</style></head>
+<body>
+<div class="row" style="align-items:center;gap:12px">
+  <button class="btn btn-primary">Adicionar ao Carrinho</button>
+  <button class="btn btn-secondary">Ir para Checkout</button>
+  <button class="btn btn-ghost">Continuar Comprando</button>
+  <button class="btn btn-disabled">Indisponível</button>
+</div>
+<div class="row" style="align-items:center;gap:12px;margin-top:14px">
+  <button class="btn btn-primary" style="background:var(--gold-strong);box-shadow:var(--shadow-gold)">hover →</button>
+  <span style="font-family:var(--font-body);font-size:13px;color:var(--ink-3)">Primary darkens to <span class="mono">#c2922b</span> + gold glow on hover · press shrinks ~0.99</span>
+</div>
+</body></html>

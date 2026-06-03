@@ -1,1 +1,88 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --gold:            #dba938;
+  --gold-strong:     #c2922b;
+  --gold-deep:       #a87c1f;
+  --gold-tint:       #f6ecd4;
+  --gold-wash:       #fbf6ea;
+
+  --rose:            #e5cec4;
+  --rose-soft:       #efe1da;
+  --rose-wash:       #f7efea;
+  --rose-deep:       #c9a99b;
+
+  --charcoal:        #343233;
+  --charcoal-soft:   #4a4748;
+  --white:           #ffffff;
+
+  --ink-1:           #343233;
+  --ink-2:           #5c5859;
+  --ink-3:           #857f80;
+  --ink-4:           #a8a2a3;
+  --line:            #e7e0dc;
+  --line-strong:     #d8cfc9;
+  --surface:         #ffffff;
+  --surface-2:       #faf7f5;
+  --bg:              #f7efea;
+
+  --status-pending-bg:   #fbf0d6;  --status-pending-fg:   #8a6516;
+  --status-search-bg:    #dfeaf4;  --status-search-fg:    #2f5e87;
+  --status-found-bg:     #e4e2f1;  --status-found-fg:     #4a4593;
+  --status-confirm-bg:   #d9ece6;  --status-confirm-fg:   #1f6f5c;
+  --status-pay-bg:       #f4e6dc;  --status-pay-fg:       #9a5a25;
+  --status-bought-bg:    #ece0f0;  --status-bought-fg:    #6b3d83;
+  --status-success-bg:   #dcecd9;  --status-success-fg:   #2f6d2a;
+  --status-danger-bg:    #f3dcd9;  --status-danger-fg:    #a23a2f;
+  --status-alt-bg:       #f6ecd4;  --status-alt-fg:       #8a6516;
+
+  --ok-bg:    #dcecd9;  --ok-fg:    #2f6d2a;
+  --warn-bg:  #fbf0d6;  --warn-fg:  #8a6516;
+  --err-bg:   #f3dcd9;  --err-fg:   #a23a2f;  --err-border: #e3b6af;
+
+  --font-display: 'Playfair Display', 'Georgia', serif;
+  --font-body:    'Inter', system-ui, -apple-system, sans-serif;
+
+  --r-card:   10px;
+  --r-btn:     6px;
+  --r-input:   8px;
+  --r-badge:  999px;
+  --r-chip:   999px;
+
+  --shadow-xs: 0 1px 2px rgba(52, 50, 51, 0.06);
+  --shadow-sm: 0 2px 8px rgba(52, 50, 51, 0.07);
+  --shadow-md: 0 6px 20px rgba(52, 50, 51, 0.09);
+  --shadow-lg: 0 16px 40px rgba(52, 50, 51, 0.13);
+  --shadow-gold: 0 8px 24px rgba(219, 169, 56, 0.28);
+
+  --container: 1152px;
+  --container-wide: 1280px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur:      220ms;
+  --dur-slow: 360ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--ink-1);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fade-in { animation: fadeIn 0.3s ease-in; }
+
+@keyframes ps-spin {
+  to { transform: rotate(360deg); }
+}
+.ps-spin { animation: ps-spin 0.7s linear infinite; }
+
+html { scroll-behavior: smooth; }

@@ -1,96 +1,129 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LayoutDashboard, Users, Package, ShoppingBag, ChevronLeft, ChevronRight, Store } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 
+const menuItems = [
+  { path: '/admin/dashboard', label: 'Dashboard', Icon: LayoutDashboard },
+  { path: '/admin/users',     label: 'Usuários',   Icon: Users },
+  { path: '/admin/products',  label: 'Produtos',   Icon: Package },
+  { path: '/admin/requests',  label: 'Solicitações', Icon: ShoppingBag },
+];
+
 export default function AdminLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const isActive = (path) => location.pathname === path;
-
-  const menuItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/admin/users', label: 'Usuários', icon: '👥' },
-    { path: '/admin/products', label: 'Produtos', icon: '📦' },
-    { path: '/admin/requests', label: 'Solicitações', icon: '🛍️' },
-  ];
+  const handleLogout = () => { logout(); navigate('/login'); };
+  const isActive = (path) => location.pathname === path || (path === '/admin/requests' && location.pathname.startsWith('/admin/requests'));
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div style={{ display: 'flex', height: '100vh', background: 'var(--surface-2)' }}>
       {/* Sidebar */}
-      <div
-        className={`${
-          sidebarOpen ? 'w-64' : 'w-20'
-        } bg-gray-900 text-white transition-all duration-300 flex flex-col`}
-      >
-        {/* Logo */}
-        <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-          {sidebarOpen && <h1 className="text-xl font-bold">Admin</h1>}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            {sidebarOpen ? '←' : '→'}
-          </button>
-        </div>
-
-        {/* Menu Items */}
-        <nav className="flex-1 p-4 space-y-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors ${
-                isActive(item.path)
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-800'
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              {sidebarOpen && <span>{item.label}</span>}
-            </Link>
-          ))}
-        </nav>
-
-        {/* User Info */}
-        <div className="p-4 border-t border-gray-700">
-          {sidebarOpen && (
-            <div className="mb-4">
-              <p className="text-sm text-gray-400">Logado como</p>
-              <p className="font-semibold truncate">{user?.full_name || user?.email}</p>
+      <aside style={{
+        width: collapsed ? 76 : 248,
+        background: 'var(--charcoal)', color: '#fff',
+        display: 'flex', flexDirection: 'column',
+        transition: 'width var(--dur) var(--ease)', flexShrink: 0,
+      }}>
+        {/* Header */}
+        <div style={{ padding: '18px', borderBottom: '1px solid rgba(255,255,255,.10)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 68 }}>
+          {!collapsed && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--gold)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>PS</div>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16, whiteSpace: 'nowrap' }}>Admin</span>
             </div>
           )}
           <button
-            onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors"
+            onClick={() => setCollapsed(!collapsed)}
+            style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.6)', cursor: 'pointer', display: 'flex', padding: 6, borderRadius: 6, marginLeft: collapsed ? 'auto' : 0 }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,.08)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
           >
-            {sidebarOpen ? 'Sair' : '🚪'}
+            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
           </button>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <div className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Painel de Administração</h2>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-600">{user?.full_name || user?.email}</span>
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: 14, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {menuItems.map(({ path, label, Icon }) => {
+            const on = isActive(path);
+            return (
+              <Link
+                key={path}
+                to={path}
+                title={collapsed ? label : undefined}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 13,
+                  padding: collapsed ? '11px' : '11px 14px',
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  borderRadius: 8, border: 'none', cursor: 'pointer', textDecoration: 'none',
+                  fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: on ? 600 : 500,
+                  background: on ? 'var(--gold)' : 'transparent',
+                  color: on ? '#fff' : 'rgba(255,255,255,.66)',
+                  transition: 'all var(--dur) var(--ease)',
+                }}
+                onMouseEnter={(e) => { if (!on) e.currentTarget.style.background = 'rgba(255,255,255,.07)'; }}
+                onMouseLeave={(e) => { if (!on) e.currentTarget.style.background = 'transparent'; }}
+              >
+                <Icon size={19} strokeWidth={on ? 2 : 1.8} />
+                {!collapsed && <span>{label}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div style={{ padding: 14, borderTop: '1px solid rgba(255,255,255,.10)' }}>
+          {!collapsed && (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(255,255,255,.4)', marginBottom: 2 }}>Logado como</div>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {user?.full_name || user?.email}
+              </div>
+            </div>
+          )}
+          <Link
+            to="/"
+            title={collapsed ? 'Ver Loja' : undefined}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '9px', borderRadius: 8, border: '1px solid rgba(255,255,255,.18)',
+              background: 'transparent', color: 'rgba(255,255,255,.8)', cursor: 'pointer',
+              fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 500, textDecoration: 'none',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,.07)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+          >
+            <Store size={16} />
+            {!collapsed && 'Ver Loja'}
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        {/* Topbar */}
+        <div style={{ background: '#fff', borderBottom: '1px solid var(--line)', padding: '0 32px', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexShrink: 0 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'var(--ink-1)', margin: 0 }}>Painel de Administração</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-2)' }}>{user?.full_name || user?.email}</span>
+            <div style={{ width: 36, height: 36, borderRadius: 999, background: 'var(--charcoal)', color: 'var(--gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, flexShrink: 0 }}>
               {user?.full_name?.charAt(0) || 'A'}
             </div>
+            <button
+              onClick={handleLogout}
+              style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: 'var(--err-fg)', background: 'none', border: '1px solid var(--err-border)', borderRadius: 6, padding: '6px 12px', cursor: 'pointer' }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--err-bg)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+            >Sair</button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-auto p-8">
+        <div style={{ flex: 1, overflow: 'auto' }}>
           {children}
         </div>
       </div>

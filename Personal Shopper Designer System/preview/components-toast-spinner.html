@@ -1,0 +1,21 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>
+.toast{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-left:3px solid var(--ok-fg);border-radius:10px;box-shadow:var(--shadow-md);padding:13px 18px;font-family:var(--font-body);font-size:14px;color:var(--ink-1);min-width:260px}
+.toast .ic{display:flex;color:var(--ok-fg)}
+.toast.err{border-left-color:var(--err-fg)} .toast.err .ic{color:var(--err-fg)}
+.spinner{width:40px;height:40px;border:3px solid var(--gold-tint);border-bottom-color:var(--gold);border-radius:999px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script></head>
+<body>
+<div class="row" style="align-items:center;gap:18px">
+  <div class="col" style="gap:10px">
+    <div class="toast"><span class="ic"><i data-lucide="check-circle-2"></i></span>Login realizado com sucesso!</div>
+    <div class="toast err"><span class="ic"><i data-lucide="alert-circle"></i></span>Erro ao carregar produtos</div>
+  </div>
+  <div style="width:1px;align-self:stretch;background:var(--line)"></div>
+  <div class="col" style="align-items:center;gap:8px"><div class="spinner"></div><span class="val">gold spinner</span></div>
+</div>
+<script>lucide.createIcons();</script>
+</body></html>

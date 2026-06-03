@@ -1,99 +1,70 @@
 import { Link } from 'react-router-dom';
 
-export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
+function Social({ path }) {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-12">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Sobre */}
+    <a
+      href="#"
+      onClick={(e) => e.preventDefault()}
+      style={{ color: 'rgba(255,255,255,.55)', display: 'flex', transition: 'color var(--dur) var(--ease)' }}
+      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--gold)'}
+      onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,.55)'}
+    >
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d={path} /></svg>
+    </a>
+  );
+}
+
+function FooterCol({ title, links }) {
+  return (
+    <div>
+      <h4 style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, color: '#fff', margin: '0 0 14px' }}>{title}</h4>
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 9 }}>
+        {links.map(([label, to]) => (
+          <li key={label}>
+            {to ? (
+              <Link
+                to={to}
+                style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,.62)', textDecoration: 'none' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--gold)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,.62)'}
+              >{label}</Link>
+            ) : (
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,.45)' }}>{label}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function Footer() {
+  return (
+    <footer style={{ background: 'var(--charcoal)', marginTop: 64 }}>
+      <div style={{ maxWidth: 'var(--container-wide)', margin: '0 auto', padding: '52px 28px 32px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 32, marginBottom: 36 }}>
           <div>
-            <h3 className="text-white font-bold text-lg mb-4">Personal Shopper</h3>
-            <p className="text-sm leading-relaxed">
-              Sua loja de produtos importados dos EUA. Qualidade, variedade e entrega rápida.
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 14 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--gold)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14 }}>PS</div>
+              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17, color: '#fff' }}>Personal Shopper</span>
+            </div>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, lineHeight: 1.65, color: 'rgba(255,255,255,.55)', maxWidth: 260, margin: 0 }}>
+              Sua loja de produtos importados dos EUA. Qualidade, variedade e entrega rápida — com o toque de um personal shopper.
             </p>
           </div>
-
-          {/* Links Úteis */}
-          <div>
-            <h4 className="text-white font-bold mb-4">Links Úteis</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/" className="hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/products" className="hover:text-white transition-colors">
-                  Produtos
-                </Link>
-              </li>
-              <li>
-                <Link to="/cart" className="hover:text-white transition-colors">
-                  Carrinho
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Conta */}
-          <div>
-            <h4 className="text-white font-bold mb-4">Conta</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/login" className="hover:text-white transition-colors">
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link to="/register" className="hover:text-white transition-colors">
-                  Registrar
-                </Link>
-              </li>
-              <li>
-                <Link to="/orders" className="hover:text-white transition-colors">
-                  Meus Pedidos
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contato */}
-          <div>
-            <h4 className="text-white font-bold mb-4">Contato</h4>
-            <ul className="space-y-2 text-sm">
-              <li>Email: contato@personalshopper.com</li>
-              <li>Telefone: (11) 99999-9999</li>
-              <li>Endereço: São Paulo, SP</li>
-            </ul>
-          </div>
+          <FooterCol title="Loja" links={[['Home', '/'], ['Produtos', '/products'], ['Carrinho', '/cart']]} />
+          <FooterCol title="Conta" links={[['Entrar', '/login'], ['Meus Pedidos', '/orders'], ['Solicitações', '/requests']]} />
+          <FooterCol title="Contato" links={[['contato@personalshopper.com', null], ['(11) 99999-9999', null], ['São Paulo, SP', null]]} />
         </div>
 
-        {/* Divisor */}
-        <div className="border-t border-gray-700 pt-8">
-          {/* Redes Sociais */}
-          <div className="flex justify-center gap-6 mb-6">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-              </svg>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M23.953 4.57a10 10 0 002.856-3.51 10 10 0 01-2.856.175 10 10 0 00-7.737-3.25c-4.247 0-7.7 3.453-7.7 7.7 0 .603.063 1.194.19 1.772A28.56 28.56 0 011.525 1.525a10 10 0 003.476 5.482c-.005-.17-.005-.34 0-.51a10 10 0 008.174-9.81 10 10 0 002.856 3.51 10 10 0 01-2.856-.175 10 10 0 007.737 3.25c4.247 0 7.7-3.453 7.7-7.7 0-.603-.063-1.194-.19-1.772z" />
-              </svg>
-            </a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm4.441 16.892c-2.102.144-6.784.144-8.883 0C5.282 16.736 5.017 15.622 5 12c.017-3.629.285-4.736 2.558-4.892 2.099-.144 6.782-.144 8.883 0C18.718 7.264 18.982 8.378 19 12c-.018 3.629-.285 4.736-2.559 4.892zM9.5 15.5v-7l6 3.5-6 3.5z" />
-              </svg>
-            </a>
-          </div>
-
-          {/* Copyright */}
-          <div className="text-center text-sm text-gray-500">
-            <p>&copy; {currentYear} Personal Shopper. Todos os direitos reservados.</p>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,.12)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 12, color: 'rgba(255,255,255,.4)' }}>
+            © {new Date().getFullYear()} Personal Shopper. Todos os direitos reservados.
+          </span>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <Social path="M12 2.2c3.2 0 3.6 0 4.9.07 1.17.05 1.8.25 2.23.42.56.22.96.48 1.38.9.42.42.68.82.9 1.38.17.42.37 1.06.42 2.23.06 1.27.07 1.65.07 4.85s0 3.58-.07 4.85c-.05 1.17-.25 1.8-.42 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.17-1.06.37-2.23.42-1.27.06-1.65.07-4.85.07s-3.58 0-4.85-.07c-1.17-.05-1.8-.25-2.23-.42-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.17-.42-.37-1.06-.42-2.23C2.2 15.58 2.2 15.2 2.2 12s0-3.58.07-4.85c.05-1.17.25-1.8.42-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.17 1.06-.37 2.23-.42C8.42 2.2 8.8 2.2 12 2.2zm0 3.3a6.5 6.5 0 100 13 6.5 6.5 0 000-13zm0 10.72a4.22 4.22 0 110-8.44 4.22 4.22 0 010 8.44zm6.78-10.97a1.52 1.52 0 11-3.04 0 1.52 1.52 0 013.04 0z" />
+            <Social path="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z" />
+            <Social path="M18.9 2H22l-7.1 8.1L23.2 22h-6.6l-5.18-6.78L5.5 22H2.4l7.6-8.68L1.2 2h6.77l4.68 6.19L18.9 2zm-1.15 18h1.83L7.3 3.9H5.34L17.75 20z" />
           </div>
         </div>
       </div>

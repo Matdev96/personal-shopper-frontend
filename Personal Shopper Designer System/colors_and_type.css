@@ -1,0 +1,139 @@
+/* ============================================================
+   Personal Shopper — Design Tokens
+   Colors + Typography foundations
+   "Accessible luxury" — warm, clean, elegant.
+   Brand: gold #dba938 · rose beige #e5cec4 · charcoal #343233
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ---------- BRAND PALETTE ---------- */
+  --gold:            #dba938;  /* primary — CTAs, highlights, badges (use sparingly) */
+  --gold-strong:     #c2922b;  /* hover / pressed gold */
+  --gold-deep:       #a87c1f;  /* text on light, focus ring */
+  --gold-tint:       #f6ecd4;  /* gold 12% — soft fills, selected chips */
+  --gold-wash:       #fbf6ea;  /* gold 5%  — faint section tint */
+
+  --rose:            #e5cec4;  /* soft rose beige — section bg, card fills */
+  --rose-soft:       #efe1da;  /* lighter rose — alternating bands */
+  --rose-wash:       #f7efea;  /* faintest rose — page backdrop */
+  --rose-deep:       #c9a99b;  /* rose border / muted accent */
+
+  --charcoal:        #343233;  /* primary text, navbar, footer */
+  --charcoal-soft:   #4a4748;  /* secondary surfaces on dark */
+  --white:           #ffffff;  /* cards, forms */
+
+  /* ---------- NEUTRALS (warm-tinted grays) ---------- */
+  --ink-1:           #343233;  /* headings, primary text */
+  --ink-2:           #5c5859;  /* body text */
+  --ink-3:           #857f80;  /* secondary / captions */
+  --ink-4:           #a8a2a3;  /* placeholder, disabled text */
+  --line:            #e7e0dc;  /* hairline borders */
+  --line-strong:     #d8cfc9;  /* input borders, dividers */
+  --surface:         #ffffff;  /* card surface */
+  --surface-2:       #faf7f5;  /* inset / subtle fill */
+  --bg:              #f7efea;  /* warm page backdrop */
+
+  /* ---------- SEMANTIC / STATUS ----------
+     Mapped from requestStatus.js, re-tuned to the warm palette.
+     Core badge colors: yellow=pendente, blue=em busca, green=entregue, red=cancelado */
+  --status-pending-bg:   #fbf0d6;  --status-pending-fg:   #8a6516;  /* pendente / aguardando */
+  --status-search-bg:    #dfeaf4;  --status-search-fg:    #2f5e87;  /* em_busca */
+  --status-found-bg:     #e4e2f1;  --status-found-fg:     #4a4593;  /* encontrado */
+  --status-confirm-bg:   #d9ece6;  --status-confirm-fg:   #1f6f5c;  /* confirmado */
+  --status-pay-bg:       #f4e6dc;  --status-pay-fg:       #9a5a25;  /* sinal / pagamento */
+  --status-bought-bg:    #ece0f0;  --status-bought-fg:    #6b3d83;  /* comprado */
+  --status-success-bg:   #dcecd9;  --status-success-fg:   #2f6d2a;  /* entregue */
+  --status-danger-bg:    #f3dcd9;  --status-danger-fg:    #a23a2f;  /* cancelado / não encontrado */
+  --status-alt-bg:       #f6ecd4;  --status-alt-fg:       #8a6516;  /* alternativa disponível */
+
+  /* stock / inline feedback */
+  --ok-bg:    #dcecd9;  --ok-fg:    #2f6d2a;
+  --warn-bg:  #fbf0d6;  --warn-fg:  #8a6516;
+  --err-bg:   #f3dcd9;  --err-fg:   #a23a2f;  --err-border: #e3b6af;
+
+  /* ---------- TYPE FAMILIES ---------- */
+  --font-display: 'Playfair Display', 'Georgia', serif;   /* headings, hero, product names */
+  --font-body:    'Inter', 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:    'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ---------- TYPE SCALE ---------- */
+  --fs-display:  56px;  --lh-display: 1.04;  /* hero h1 */
+  --fs-h1:       40px;  --lh-h1:      1.10;
+  --fs-h2:       30px;  --lh-h2:      1.15;
+  --fs-h3:       22px;  --lh-h3:      1.25;
+  --fs-h4:       18px;  --lh-h4:      1.30;
+  --fs-lg:       18px;  --lh-lg:      1.55;  /* lead paragraph */
+  --fs-body:     16px;  --lh-body:    1.6;
+  --fs-sm:       14px;  --lh-sm:      1.5;
+  --fs-xs:       12px;  --lh-xs:      1.45;  /* badges, captions, eyebrows */
+
+  --tracking-eyebrow: 0.14em;  /* uppercase eyebrows / section kickers */
+  --tracking-tight:  -0.01em;  /* large display headings */
+
+  /* ---------- RADII ---------- */
+  --r-card:   10px;   /* cards 8–12px */
+  --r-btn:     6px;   /* buttons */
+  --r-input:   8px;   /* form fields */
+  --r-badge:  999px;  /* status pills */
+  --r-chip:   999px;
+
+  /* ---------- ELEVATION (warm-tinted shadows) ---------- */
+  --shadow-xs: 0 1px 2px rgba(52, 50, 51, 0.06);
+  --shadow-sm: 0 2px 8px rgba(52, 50, 51, 0.07);
+  --shadow-md: 0 6px 20px rgba(52, 50, 51, 0.09);
+  --shadow-lg: 0 16px 40px rgba(52, 50, 51, 0.13);
+  --shadow-gold: 0 8px 24px rgba(219, 169, 56, 0.28);
+
+  /* ---------- SPACING (4px base) ---------- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px; --sp-20: 80px; --sp-24: 96px;
+
+  /* ---------- LAYOUT ---------- */
+  --container: 1152px;   /* max-w-6xl-ish content width */
+  --container-wide: 1280px;
+
+  /* ---------- MOTION ---------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 140ms;
+  --dur:      220ms;
+  --dur-slow: 360ms;
+}
+
+/* ============================================================
+   SEMANTIC ELEMENT STYLES
+   Apply these classes (or copy the rules) for consistent type.
+   ============================================================ */
+
+.ps-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--ink-1);
+}
+.ps-h1 { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-tight); color: var(--ink-1); }
+.ps-h2 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h2); line-height: var(--lh-h2); color: var(--ink-1); }
+.ps-h3 { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); line-height: var(--lh-h3); color: var(--ink-1); }
+.ps-h4 { font-family: var(--font-body); font-weight: 600; font-size: var(--fs-h4); line-height: var(--lh-h4); color: var(--ink-1); }
+
+.ps-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--gold-deep);
+}
+
+.ps-lead { font-family: var(--font-body); font-weight: 400; font-size: var(--fs-lg); line-height: var(--lh-lg); color: var(--ink-2); }
+.ps-body { font-family: var(--font-body); font-weight: 400; font-size: var(--fs-body); line-height: var(--lh-body); color: var(--ink-2); }
+.ps-sm   { font-family: var(--font-body); font-weight: 400; font-size: var(--fs-sm); line-height: var(--lh-sm); color: var(--ink-3); }
+.ps-caption { font-family: var(--font-body); font-weight: 500; font-size: var(--fs-xs); line-height: var(--lh-xs); color: var(--ink-3); }
+
+/* Price — display serif emphasises elegance over the blue original */
+.ps-price { font-family: var(--font-display); font-weight: 600; color: var(--ink-1); }
+.ps-price-accent { color: var(--gold-deep); }

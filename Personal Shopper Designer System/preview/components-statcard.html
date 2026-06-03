@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<link rel="stylesheet" href="../colors_and_type.css"><link rel="stylesheet" href="_card.css">
+<style>body{background:var(--surface-2)}
+.stat{background:#fff;border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow-sm);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;min-width:200px}
+.stat .t{font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.02em}
+.stat .v{font-family:var(--font-display);font-weight:700;font-size:30px;color:var(--ink-1);margin-top:6px}
+.ic{width:44px;height:44px;border-radius:10px;background:var(--gold-tint);color:var(--gold-deep);display:flex;align-items:center;justify-content:center}
+</style>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script></head>
+<body>
+<div class="row" style="gap:14px">
+  <div class="stat"><div><div class="t">Receita Total</div><div class="v">R$ 48.290</div></div><div class="ic"><i data-lucide="wallet"></i></div></div>
+  <div class="stat"><div><div class="t">Total de Pedidos</div><div class="v">312</div></div><div class="ic"><i data-lucide="shopping-cart"></i></div></div>
+  <div class="stat"><div><div class="t">Precisam de Ação</div><div class="v">7</div></div><div class="ic" style="background:var(--err-bg);color:var(--err-fg)"><i data-lucide="alert-triangle"></i></div></div>
+</div>
+<div style="margin-top:14px;font-family:var(--font-body);font-size:13px;color:var(--ink-3)">Admin stat cards — Lucide icons in tinted tiles replace the original emoji. Serif numerals.</div>
+<script>lucide.createIcons();</script>
+</body></html>

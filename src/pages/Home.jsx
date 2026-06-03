@@ -1,16 +1,94 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Search, ArrowRight, ShoppingBag } from 'lucide-react';
 import useProductStore from '../store/productStore';
 import useCategoryStore from '../store/categoryStore';
 import useAuthStore from '../store/authStore';
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 8;
+
+function ProductCard({ product }) {
+  const [hover, setHover] = useState(false);
+  const out = product.stock === 0;
+  return (
+    <Link
+      to={`/products/${product.id}`}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: '#fff', border: '1px solid var(--line)',
+        borderRadius: 'var(--r-card)', overflow: 'hidden',
+        boxShadow: hover ? 'var(--shadow-lg)' : 'var(--shadow-sm)',
+        transform: hover ? 'translateY(-3px)' : 'none',
+        transition: 'all var(--dur) var(--ease)',
+        textDecoration: 'none', display: 'block',
+      }}
+    >
+      <div style={{ height: 180, overflow: 'hidden', background: 'linear-gradient(135deg, var(--rose-soft), var(--rose))', position: 'relative' }}>
+        {product.image_url ? (
+          <img
+            src={product.image_url} alt={product.name}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', transform: hover ? 'scale(1.05)' : 'scale(1)', transition: 'transform var(--dur-slow) var(--ease)' }}
+          />
+        ) : (
+          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rose-deep)' }}>
+            <ShoppingBag size={48} strokeWidth={1.3} />
+          </div>
+        )}
+        {product.category?.name && (
+          <span style={{ position: 'absolute', top: 10, left: 10, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11, letterSpacing: '.06em', textTransform: 'uppercase', background: 'rgba(219,169,56,.92)', color: '#fff', padding: '3px 9px', borderRadius: 999 }}>
+            {product.category.name}
+          </span>
+        )}
+      </div>
+      <div style={{ padding: '14px 16px 16px' }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 16, color: 'var(--ink-1)', margin: '0 0 4px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: 40 }}>{product.name}</h3>
+        <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--ink-3)', margin: '0 0 12px', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', minHeight: 36, lineHeight: 1.4 }}>{product.description}</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: 'var(--ink-1)' }}>
+            R$ {product.price.toFixed(2).replace('.', ',')}
+          </span>
+          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11, padding: '4px 10px', borderRadius: 999, background: out ? 'var(--err-bg)' : 'var(--ok-bg)', color: out ? 'var(--err-fg)' : 'var(--ok-fg)' }}>
+            {out ? 'Esgotado' : `${product.stock} em estoque`}
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function CategoryCard({ category, active, onClick }) {
+  const [hover, setHover] = useState(false);
+  const on = active || hover;
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: active ? 'var(--gold-tint)' : '#fff',
+        border: `1px solid ${on ? 'var(--gold)' : 'var(--line)'}`,
+        borderRadius: 'var(--r-card)', padding: '18px 14px',
+        cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+        transition: 'all var(--dur) var(--ease)',
+        boxShadow: on ? 'var(--shadow-md)' : 'none',
+      }}
+    >
+      <span style={{ width: 44, height: 44, borderRadius: 999, background: active ? 'var(--gold)' : 'var(--gold-tint)', color: active ? '#fff' : 'var(--gold-deep)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+        🛍️
+      </span>
+      <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 600, color: active ? 'var(--gold-deep)' : 'var(--ink-1)', textAlign: 'center' }}>
+        {category.name}
+      </span>
+    </button>
+  );
+}
 
 export default function Home() {
   const { products, fetchProducts, isLoading, currentPage, totalPages } = useProductStore();
   const { categories, fetchCategories } = useCategoryStore();
-  const { user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -49,212 +127,155 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16 px-4">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Personal Shopper
+    <div style={{ background: 'var(--bg)' }}>
+      {/* Hero */}
+      <section style={{ background: 'linear-gradient(120deg, var(--rose) 0%, var(--rose-soft) 60%, var(--gold-wash) 100%)' }}>
+        <div style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '80px 28px 88px', textAlign: 'center' }}>
+          <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--gold-deep)', marginBottom: 18 }}>
+            Personal Shopping · Importados
+          </div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(32px, 5vw, 54px)', lineHeight: 1.05, letterSpacing: '-0.01em', color: 'var(--ink-1)', margin: '0 0 18px' }}>
+            Os melhores produtos<br />dos EUA, sob medida
           </h1>
-          <p className="text-xl md:text-2xl mb-8">
-            Encontre os melhores produtos importados dos EUA
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 18, lineHeight: 1.55, color: 'var(--ink-2)', maxWidth: 540, margin: '0 auto 30px' }}>
+            Compre do nosso catálogo ou solicite uma busca personalizada. Cuidamos de cada detalhe até a entrega.
           </p>
-          {!user && (
-            <div className="space-x-4">
-              <Link
-                to="/login"
-                className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Entrar
-              </Link>
-              <Link
-                to="/register"
-                className="inline-block bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition-colors"
-              >
-                Registrar
-              </Link>
-            </div>
-          )}
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link
+              to="/products"
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, background: 'var(--gold)', color: '#fff', textDecoration: 'none', padding: '12px 26px', borderRadius: 'var(--r-btn)', transition: 'background var(--dur) var(--ease)', display: 'inline-flex', alignItems: 'center', gap: 8 }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gold-strong)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'var(--gold)'}
+            >Explorar Catálogo</Link>
+            <Link
+              to={isAuthenticated ? '/requests/new' : '/login'}
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, background: '#fff', color: 'var(--ink-1)', textDecoration: 'none', padding: '12px 26px', borderRadius: 'var(--r-btn)', border: '1px solid var(--line-strong)', transition: 'all var(--dur) var(--ease)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--ink-3)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--line-strong)'; }}
+            >Solicitar uma Busca</Link>
+          </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto py-12 px-4">
-
-        {/* Barra de Busca */}
-        <section className="mb-8">
-          <form onSubmit={handleSearch} className="flex gap-2">
+      <div style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '56px 28px' }}>
+        {/* Busca */}
+        <form onSubmit={handleSearch} style={{ display: 'flex', gap: 10, marginBottom: 56 }}>
+          <div style={{ flex: 1, position: 'relative' }}>
+            <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--ink-4)', display: 'flex' }}>
+              <Search size={17} />
+            </span>
             <input
-              type="text"
-              value={searchTerm}
+              type="text" value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar produtos..."
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 text-gray-900"
+              placeholder="Buscar produtos importados…"
+              style={{ width: '100%', fontFamily: 'var(--font-body)', fontSize: 15, padding: '11px 14px 11px 42px', borderRadius: 'var(--r-input)', border: '1px solid var(--line-strong)', background: '#fff', color: 'var(--ink-1)', outline: 'none' }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--gold)'; e.target.style.boxShadow = '0 0 0 3px rgba(219,169,56,.15)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--line-strong)'; e.target.style.boxShadow = 'none'; }}
             />
+          </div>
+          <button
+            type="submit"
+            style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, background: 'var(--gold)', color: '#fff', border: 'none', padding: '11px 22px', borderRadius: 'var(--r-btn)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, transition: 'background var(--dur) var(--ease)' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gold-strong)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--gold)'}
+          ><Search size={16} />Buscar</button>
+          {searchTerm && (
             <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Buscar
-            </button>
-            {searchTerm && (
-              <button
-                type="button"
-                onClick={() => { setSearchTerm(''); setPage(1); loadProducts(1, selectedCategory, ''); }}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-semibold transition-colors"
-              >
-                Limpar
-              </button>
-            )}
-          </form>
-        </section>
+              type="button"
+              onClick={() => { setSearchTerm(''); setPage(1); loadProducts(1, selectedCategory, ''); }}
+              style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, background: '#fff', color: 'var(--ink-2)', border: '1px solid var(--line-strong)', padding: '11px 16px', borderRadius: 'var(--r-btn)', cursor: 'pointer' }}
+            >Limpar</button>
+          )}
+        </form>
 
         {/* Categorias */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Categorias</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {/* Botão "Todas as Categorias" */}
-            <button
-              onClick={() => handleCategoryFilter(null)}
-              className={`p-4 rounded-lg font-semibold transition-colors ${
-                selectedCategory === null
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-900 border border-gray-300 hover:border-blue-600'
-              }`}
-            >
-              Todas
-            </button>
-
-            {/* Categorias */}
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryFilter(category.id)}
-                className={`p-4 rounded-lg font-semibold transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-900 border border-gray-300 hover:border-blue-600'
-                }`}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </section>
+        {categories.length > 0 && (
+          <section style={{ marginBottom: 56 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 22 }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold-deep)', marginBottom: 6 }}>Navegue</div>
+                <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 28, color: 'var(--ink-1)', margin: 0 }}>Categorias</h2>
+              </div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(130px, 1fr))`, gap: 14 }}>
+              <CategoryCard category={{ name: 'Todas' }} active={selectedCategory === null} onClick={() => handleCategoryFilter(null)} />
+              {categories.map((cat) => (
+                <CategoryCard key={cat.id} category={cat} active={selectedCategory === cat.id} onClick={() => handleCategoryFilter(cat.id)} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Produtos */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Produtos</h2>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 22 }}>
+            <div>
+              <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--gold-deep)', marginBottom: 6 }}>Seleção</div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 28, color: 'var(--ink-1)', margin: 0 }}>
+                {searchTerm ? `Resultados para "${searchTerm}"` : 'Em Destaque'}
+              </h2>
+            </div>
+            <Link
+              to="/products"
+              style={{ fontFamily: 'var(--font-body)', fontSize: 14, fontWeight: 600, color: 'var(--gold-deep)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--gold-strong)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--gold-deep)'}
+            >Ver todos <ArrowRight size={15} /></Link>
+          </div>
 
           {isLoading ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+              <div className="ps-spin" style={{ width: 36, height: 36, borderRadius: 999, border: '3px solid var(--gold-tint)', borderTopColor: 'var(--gold)' }} />
             </div>
           ) : products.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Nenhum produto encontrado</p>
+            <div style={{ background: '#fff', border: '1px solid var(--line)', borderRadius: 'var(--r-card)', padding: '56px 24px', textAlign: 'center' }}>
+              <ShoppingBag size={48} strokeWidth={1.3} style={{ color: 'var(--rose-deep)', marginBottom: 16 }} />
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: 16, color: 'var(--ink-3)', margin: 0 }}>Nenhum produto encontrado</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  to={`/products/${product.id}`}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Imagem do Produto */}
-                  <div className="w-full h-48 bg-gray-200 overflow-hidden">
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Sem imagem
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Informações do Produto */}
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate">
-                      {product.name}
-                    </h3>
-
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                      {product.description}
-                    </p>
-
-                    {/* Preço e Estoque */}
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-2xl font-bold text-blue-600">
-                        R$ {product.price.toFixed(2)}
-                      </span>
-                      <span
-                        className={`text-sm font-semibold px-2 py-1 rounded ${
-                          product.stock > 0
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {product.stock > 0 ? `${product.stock} em estoque` : 'Fora de estoque'}
-                      </span>
-                    </div>
-
-                    {/* Informações Adicionais */}
-                    <div className="text-sm text-gray-600 mb-3">
-                      {product.color && <p>Cor: {product.color}</p>}
-                      {product.size && <p>Tamanho: {product.size}</p>}
-                    </div>
-
-                    {/* Botão Ver Detalhes */}
-                    <button className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                      Ver Detalhes
-                    </button>
-                  </div>
-                </Link>
-              ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 22 }}>
+              {products.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
           )}
 
-          {/* Paginação */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-10">
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 40 }}>
               <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
-                className="px-4 py-2 rounded-lg border font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-gray-100 text-gray-700"
-              >
-                &larr; Anterior
-              </button>
-
+                onClick={() => handlePageChange(page - 1)} disabled={page <= 1}
+                style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, padding: '9px 16px', borderRadius: 'var(--r-btn)', border: '1px solid var(--line-strong)', background: '#fff', color: 'var(--ink-2)', cursor: page <= 1 ? 'not-allowed' : 'pointer', opacity: page <= 1 ? 0.4 : 1 }}
+              >← Anterior</button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => handlePageChange(p)}
-                  className={`px-4 py-2 rounded-lg border font-semibold transition-colors ${
-                    p === currentPage
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {p}
-                </button>
+                <button key={p} onClick={() => handlePageChange(p)}
+                  style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, width: 40, height: 40, borderRadius: 'var(--r-btn)', border: `1px solid ${p === page ? 'var(--gold)' : 'var(--line-strong)'}`, background: p === page ? 'var(--gold)' : '#fff', color: p === page ? '#fff' : 'var(--ink-2)', cursor: 'pointer' }}
+                >{p}</button>
               ))}
-
               <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= totalPages}
-                className="px-4 py-2 rounded-lg border font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-gray-100 text-gray-700"
-              >
-                Próxima &rarr;
-              </button>
+                onClick={() => handlePageChange(page + 1)} disabled={page >= totalPages}
+                style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 14, padding: '9px 16px', borderRadius: 'var(--r-btn)', border: '1px solid var(--line-strong)', background: '#fff', color: 'var(--ink-2)', cursor: page >= totalPages ? 'not-allowed' : 'pointer', opacity: page >= totalPages ? 0.4 : 1 }}
+              >Próxima →</button>
             </div>
           )}
         </section>
       </div>
+
+      {/* CTA Banner */}
+      <section style={{ background: 'var(--charcoal)' }}>
+        <div style={{ maxWidth: 'var(--container)', margin: '0 auto', padding: '56px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--gold)', marginBottom: 12 }}>Não encontrou?</div>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 28, color: '#fff', margin: '0 0 8px' }}>Peça uma busca personalizada</h2>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, color: 'rgba(255,255,255,.6)', margin: 0, maxWidth: 460 }}>
+              Diga o que procura — loja, referência, orçamento — e nosso personal shopper encontra para você.
+            </p>
+          </div>
+          <Link
+            to={isAuthenticated ? '/requests/new' : '/login'}
+            style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 15, background: 'var(--gold)', color: '#fff', textDecoration: 'none', padding: '13px 28px', borderRadius: 'var(--r-btn)', transition: 'all var(--dur) var(--ease)', whiteSpace: 'nowrap', boxShadow: 'var(--shadow-gold)' }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--gold-strong)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--gold)'}
+          >Nova Solicitação</Link>
+        </div>
+      </section>
     </div>
   );
 }
